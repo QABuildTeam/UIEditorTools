@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce6cec76e2c88b141ae6f930af7b8427, type: 3}
+  m_Name: SecondUIPair
+  m_EditorClassIdentifier: 
+  viewAssetReference:
+    m_AssetGUID: 44e71ec44314d984ea8ae45c52e45471
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
