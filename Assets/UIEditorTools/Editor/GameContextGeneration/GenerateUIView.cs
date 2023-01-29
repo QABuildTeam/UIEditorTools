@@ -80,14 +80,17 @@ namespace {0}.Views
             return gocList;
         }
 
-        private static HashSet<string> usingClauses = new HashSet<string>
+        private static List<string> uiViewInternalUsingClauses = new List<string>
         {
             "System",
             "UnityEngine",
             "UnityEngine.UI",
-            "System.Threading.Tasks"
+            "System.Threading.Tasks",
+            "UIEditorTools",
+            "UIEditorTools.Views",
+            "UIEditorTools.Environment",
+            "UIEditorTools.Controllers"
         };
-        private static string usingTemplate = @"using {0};";
         private static void GenerateUIView(string filename, string filenameGenerated, string uiViewName, string projectRootNamespace, List<GameObjectComponent> components, List<ICodeGenerator> generators)
         {
             if (File.Exists(filename))
@@ -96,15 +99,19 @@ namespace {0}.Views
             }
             else
             {
+                var partialUsingClauses = new GenerateUsingClauses(new List<string> { "UIEditorTools.Views" });
+                Directory.CreateDirectory(Path.GetDirectoryName(filename));
                 Debug.Log($"Creating empty script file {filename}");
                 using (var stream = new StreamWriter(filename))
                 {
+                    stream.Write(partialUsingClauses.GetUsingClauses());
                     stream.WriteLine(string.Format(uiViewHeader, projectRootNamespace, uiViewName));
                     stream.WriteLine(uiViewFooter);
                 }
             }
             Directory.CreateDirectory(Path.GetDirectoryName(filenameGenerated));
             Debug.Log($"Generating UIView {uiViewName} to {filenameGenerated}");
+            var usingClauses = new GenerateUsingClauses(uiViewInternalUsingClauses);
             using (var stream = new StreamWriter(filenameGenerated))
             {
                 string body = string.Empty;
@@ -123,10 +130,7 @@ namespace {0}.Views
                         done += generator.DoneCode(component.codeName, component.component);
                     }
                 }
-                foreach (var usingClause in usingClauses)
-                {
-                    stream.WriteLine(string.Format(usingTemplate, usingClause));
-                }
+                stream.Write(usingClauses.GetUsingClauses());
                 stream.WriteLine(string.Format(uiViewHeader, projectRootNamespace, uiViewName));
                 stream.WriteLine(body);
                 stream.WriteLine(uiViewInitTemplate, init);

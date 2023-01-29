@@ -12,28 +12,28 @@ namespace UIEditorTools.Editor
 {
     public partial class GameContextGenerationUtility : EditorWindow
     {
-        private static string gameContextTemplate = @"using UnityEngine;
-
+        private static string gameContextTemplate = @"
 namespace {1}.Settings
 {{
     public class {0} : GameContext
     {{
     }}
 }}";
+        private static List<string> gameContextInternalUsingClauses = new List<string>
+        {
+            "UnityEngine",
+            "UIEditorTools",
+            "UIEditorTools.Settings"
+        };
         private static void GenerateGameContext(string filename, string projectRootNamespace, string gameContextName)
         {
-            if (!File.Exists(filename))
+            Directory.CreateDirectory(Path.GetDirectoryName(filename));
+            Debug.Log($"Creating game context script {filename}");
+            using (var stream = new StreamWriter(filename))
             {
-                Directory.CreateDirectory(Path.GetDirectoryName(filename));
-                Debug.Log($"Creating game context script {filename}");
-                using (var stream = new StreamWriter(filename))
-                {
-                    stream.WriteLine(string.Format(gameContextTemplate, gameContextName, projectRootNamespace));
-                }
-            }
-            else
-            {
-                Debug.Log($"Skipping game context script {filename} - already exists");
+                var usingClauses = new GenerateUsingClauses(gameContextInternalUsingClauses);
+                stream.Write(usingClauses.GetUsingClauses());
+                stream.WriteLine(string.Format(gameContextTemplate, gameContextName, projectRootNamespace));
             }
         }
 

@@ -1,9 +1,11 @@
 using UnityEngine;
+using UIEditorTools;
 using UIEditorTools.Environment;
-using UIEditorTools.Controllers;
-using UIEditorTools.Views;
+using UIEditorTools.Settings;
+using UIEditorToolsTest.Controllers;
+using UIEditorToolsTest.Views;
 
-namespace UIEditorTools.Settings
+namespace UIEditorToolsTest.Settings
 {
     public class SecondUIPair : ViewControllerPair<SecondUIController, SecondUIView>
     {

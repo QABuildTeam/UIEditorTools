@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEditor;
@@ -10,11 +11,7 @@ namespace UIEditorTools.Editor
 {
     public partial class GameContextGenerationUtility : EditorWindow
     {
-        private static string uiPairTemlpate = @"using UnityEngine;
-using {0}.Environment;
-using {0}.Controllers;
-using {0}.Views;
-
+        private static string uiPairTemlpate = @"
 namespace {0}.Settings
 {{
     public class {1} : ViewControllerPair<{2}, {3}>
@@ -25,23 +22,24 @@ namespace {0}.Settings
         }}
     }}
 }}";
+        private static List<string> uiPairInternalUsingClauses = new List<string>
+        {
+            "UnityEngine",
+            "UIEditorTools",
+            "UIEditorTools.Environment",
+            "UIEditorTools.Settings"
+        };
         private static void GenerateUIPair(string scriptFilename, string projectRootNamespace, string uiPairName, string uiControllerName, string uiViewName)
         {
-            if (!File.Exists(scriptFilename))
+            Directory.CreateDirectory(Path.GetDirectoryName(scriptFilename));
+            Debug.Log($"Creating UIPair script {scriptFilename}");
+            using (var stream = new StreamWriter(scriptFilename))
             {
-                //if (!Directory.Exists(Path.GetDirectoryName(scriptFilename)))
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(scriptFilename));
-                }
-                Debug.Log($"Creating UIPair script {scriptFilename}");
-                using (var stream = new StreamWriter(scriptFilename))
-                {
-                    stream.WriteLine(string.Format(uiPairTemlpate, projectRootNamespace, uiPairName, uiControllerName, uiViewName));
-                }
-            }
-            else
-            {
-                Debug.Log($"Skipping UIPair script {scriptFilename}");
+                var usingClauses = new GenerateUsingClauses(uiPairInternalUsingClauses);
+                usingClauses.Add(string.Format("{0}.Controllers", projectRootNamespace));
+                usingClauses.Add(string.Format("{0}.Views", projectRootNamespace));
+                stream.Write(usingClauses.GetUsingClauses());
+                stream.WriteLine(string.Format(uiPairTemlpate, projectRootNamespace, uiPairName, uiControllerName, uiViewName));
             }
         }
 

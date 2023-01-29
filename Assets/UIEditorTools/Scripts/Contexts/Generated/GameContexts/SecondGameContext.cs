@@ -1,6 +1,8 @@
 using UnityEngine;
+using UIEditorTools;
+using UIEditorTools.Settings;
 
-namespace UIEditorTools.Settings
+namespace UIEditorToolsTest.Settings
 {
     public class SecondGameContext : GameContext
     {

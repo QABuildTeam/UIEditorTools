@@ -2,10 +2,14 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using UIEditorTools;
+using UIEditorTools.Views;
+using UIEditorTools.Environment;
+using UIEditorTools.Controllers;
 using Views.Common;
 using TMPro;
 
-namespace UIEditorTools.Views
+namespace UIEditorToolsTest.Views
 {
     public partial class SecondUIView : UIView
     {

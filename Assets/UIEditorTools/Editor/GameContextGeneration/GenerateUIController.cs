@@ -8,13 +8,7 @@ namespace UIEditorTools.Editor
 {
     public partial class GameContextGenerationUtility : EditorWindow
     {
-        private static string uiControllerHeader = @"using System;
-using System.Linq;
-using UIEditorTools.Environment;
-using UIEditorTools.Settings;
-using UIEditorTools.Views;
-using System.Threading.Tasks;
-
+        private static string uiControllerHeader = @"
 namespace {0}.Controllers
 {{
     public partial class {1} : ContextController
@@ -63,40 +57,46 @@ namespace {0}.Controllers
         }}
     }}
 }}";
-
+        private static List<string> uiControllerInternalUsingClauses = new List<string>
+        {
+            "System",
+            "System.Linq",
+            "UIEditorTools",
+            "UIEditorTools.Controllers",
+            "UIEditorTools.Environment",
+            "UIEditorTools.Settings",
+            "UIEditorTools.Views",
+            "System.Threading.Tasks"
+        };
         private static void GenerateUIController(string filename, string projectRootNamespace, string uiControllerName, string uiViewName, List<GameObjectComponent> components, List<ICodeGenerator> generators)
         {
-            if (File.Exists(filename))
+            Directory.CreateDirectory(Path.GetDirectoryName(filename));
+            Debug.Log($"Creating empty script file {filename}");
+            using (var stream = new StreamWriter(filename))
             {
-                Debug.Log($"Skipping main script file {filename} - already exists");
-            }
-            else
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(filename));
-                Debug.Log($"Creating empty script file {filename}");
-                using (var stream = new StreamWriter(filename))
+                var usingClauses = new GenerateUsingClauses(uiControllerInternalUsingClauses);
+                usingClauses.Add(string.Format("{0}.Views", projectRootNamespace));
+                stream.Write(usingClauses.GetUsingClauses());
+                string uiViewLocalName = Regex.Replace(uiViewName, "UI", string.Empty);
+                stream.WriteLine(string.Format(uiControllerHeader, projectRootNamespace, uiControllerName, uiViewName, uiViewLocalName));
+                string body = string.Empty;
+                string subscribe = string.Empty;
+                string unsubscribe = string.Empty;
+                foreach (var component in components)
                 {
-                    string uiViewLocalName = Regex.Replace(uiViewName, "UI", string.Empty);
-                    stream.WriteLine(string.Format(uiControllerHeader, projectRootNamespace, uiControllerName, uiViewName, uiViewLocalName));
-                    string body = string.Empty;
-                    string subscribe = string.Empty;
-                    string unsubscribe = string.Empty;
-                    foreach (var component in components)
+                    foreach (var generator in generators)
                     {
-                        foreach (var generator in generators)
+                        var action = generator.ActionControlName(component.codeName, component.component);
+                        if (!string.IsNullOrEmpty(action))
                         {
-                            var action = generator.ActionControlName(component.codeName, component.component);
-                            if (!string.IsNullOrEmpty(action))
-                            {
-                                body += string.Format(onActionHandlerTemplate, action, generator.ActionControlArguments(component.codeName, component.component));
-                                subscribe += string.Format(onActionHandlerSubscribeTemplate, uiViewLocalName, action);
-                                unsubscribe += string.Format(onActionHandlerUnsubscribeTemplate, uiViewLocalName, action);
-                            }
+                            body += string.Format(onActionHandlerTemplate, action, generator.ActionControlArguments(component.codeName, component.component));
+                            subscribe += string.Format(onActionHandlerSubscribeTemplate, uiViewLocalName, action);
+                            unsubscribe += string.Format(onActionHandlerUnsubscribeTemplate, uiViewLocalName, action);
                         }
                     }
-                    stream.WriteLine(string.Format(bodyTemplate, body, subscribe, unsubscribe));
-                    stream.WriteLine(string.Format(uiControllerFooter, uiViewLocalName));
                 }
+                stream.WriteLine(string.Format(bodyTemplate, body, subscribe, unsubscribe));
+                stream.WriteLine(string.Format(uiControllerFooter, uiViewLocalName));
             }
         }
     }
