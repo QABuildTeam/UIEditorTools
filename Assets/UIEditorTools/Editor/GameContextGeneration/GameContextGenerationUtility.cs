@@ -15,7 +15,8 @@ namespace UIEditorTools.Editor
         [MenuItem("Tools/UI Editor Tools/Code generation/Generate Game Context", false, 0)]
         private static void ShowWIndow()
         {
-            EditorWindow.GetWindow(typeof(GameContextGenerationUtility));
+            //EditorWindow.GetWindow(typeof(GameContextGenerationUtility));
+            EditorWindow.GetWindow<GameContextGenerationUtility>().LoadSettings();
         }
 
         private string projectRootNamespace = "UIEditorTools";
@@ -33,6 +34,46 @@ namespace UIEditorTools.Editor
         private bool generateUIController = true;
         private bool generateUIPair = true;
         private bool generateGameContext = true;
+
+        private static string gameContextGenerationSettingsAssetPath = "Assets/UIEditorTools/Resources/GameContextGenerationSettings.asset";
+
+        private GameContextGenerationSettings CreateSettings()
+        {
+            var settings = ScriptableObject.CreateInstance<GameContextGenerationSettings>();
+            settings.projectRootNamespace = projectRootNamespace;
+            settings.uiViewFolder = uiViewFolder;
+            settings.uiControllerFolder = uiControllerFolder;
+            settings.uiPairFolder = uiPairFolder;
+            settings.uiPairAssetFolder = uiPairAssetFolder;
+            settings.gameContextFolder = gameContextFolder;
+            settings.gameContextAssetFolder = gameContextAssetFolder;
+            return settings;
+        }
+        private void LoadSettings()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(gameContextGenerationSettingsAssetPath));
+            GameContextGenerationSettings settings = AssetDatabase.LoadAssetAtPath<GameContextGenerationSettings>(gameContextGenerationSettingsAssetPath);
+            if (settings == null)
+            {
+                settings = CreateSettings();
+                AssetDatabase.CreateAsset(settings, gameContextGenerationSettingsAssetPath);
+            }
+            projectRootNamespace = settings.projectRootNamespace;
+            uiViewFolder = settings.uiViewFolder;
+            uiControllerFolder = settings.uiControllerFolder;
+            uiPairFolder = settings.uiPairFolder;
+            uiPairAssetFolder = settings.uiPairAssetFolder;
+            gameContextFolder = settings.gameContextFolder;
+            gameContextAssetFolder = settings.gameContextAssetFolder;
+        }
+
+        private void SaveSettings()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(gameContextGenerationSettingsAssetPath));
+            var settings = CreateSettings();
+            AssetDatabase.CreateAsset(settings, gameContextGenerationSettingsAssetPath);
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+        }
 
         private void OnGUI()
         {
@@ -78,6 +119,11 @@ namespace UIEditorTools.Editor
                     generateGameContext,
                     gameContextFolder,
                     gameContextAssetFolder);
+            }
+            EditorGUILayout.Separator();
+            if(GUILayout.Button("Save settings"))
+            {
+                SaveSettings();
             }
         }
 
