@@ -7,7 +7,7 @@ namespace UIEditorTools.Editor
 {
     public partial class GameContextGenerationUtility : EditorWindow
     {
-        private abstract class GenerateUIViewOnIValueDisplay<M, T> : CodeGenerator<M> where M : MonoBehaviour, IValueDisplay<T>
+        public abstract class GenerateUIViewOnIValueDisplay<M, T> : CodeGenerator<M> where M : MonoBehaviour, IValueDisplay<T>
         {
             protected override string NamePartToRemove => string.Empty;
             protected override string BodyCodeTemplate => @$"        [SerializeField]
@@ -22,7 +22,6 @@ namespace UIEditorTools.Editor
             protected override string ControlNameSuffix => string.Empty;
             protected override string ActionNameSuffix => string.Empty;
             protected override string ActionArguments => string.Empty;
-            protected override List<string> UsingClauses => new List<string> { "Views.Common" };
         }
     }
 }
