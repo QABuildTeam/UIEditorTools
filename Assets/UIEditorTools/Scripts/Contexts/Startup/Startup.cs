@@ -7,14 +7,14 @@ namespace UIEditorTools.Startup
 	public class Startup : MonoBehaviour
 	{
 		[SerializeField]
-		private ContextManager contextManager;
+		protected ContextManager contextManager;
 		[SerializeField]
-		private SettingsList settings;
+		protected SettingsList settings;
 		[SerializeField]
-		private GameContextList gameContextList;
+		protected GameContextList gameContextList;
 
 		private static Startup instance;
-		private ApplicationContext appContext;
+		private IApplicationContext appContext;
 
 		private void Awake()
 		{
@@ -30,9 +30,13 @@ namespace UIEditorTools.Startup
 			Initialize();
 		}
 
+		protected virtual IApplicationContext CreateApplicationContext()
+        {
+			return new ApplicationContext(contextManager, settings, gameContextList);
+		}
 		private void Initialize()
 		{
-			appContext = new ApplicationContext(contextManager, settings, gameContextList);
+			appContext = CreateApplicationContext();
 			appContext.Initialize();
 		}
 
