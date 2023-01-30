@@ -49,7 +49,7 @@ namespace UIEditorTools.Editor
             settings.gameContextAssetFolder = gameContextAssetFolder;
             return settings;
         }
-        private void LoadSettings()
+        private GameContextGenerationUtility LoadSettings()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(gameContextGenerationSettingsAssetPath));
             GameContextGenerationSettings settings = AssetDatabase.LoadAssetAtPath<GameContextGenerationSettings>(gameContextGenerationSettingsAssetPath);
@@ -65,6 +65,7 @@ namespace UIEditorTools.Editor
             uiPairAssetFolder = settings.uiPairAssetFolder;
             gameContextFolder = settings.gameContextFolder;
             gameContextAssetFolder = settings.gameContextAssetFolder;
+            return this;
         }
 
         private void SaveSettings()

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7387823761225256661}
   - component: {fileID: 3443589427032990540}
   - component: {fileID: 4692384936192693074}
-  - component: {fileID: 3521500170198264981}
+  - component: {fileID: 1618488708936653214}
   m_Layer: 0
   m_Name: SecondUIView
   m_TagString: Untagged
@@ -134,7 +134,7 @@ MonoBehaviour:
   initialSortingOrder: 1
   workingSortingOrder: 0
   canvasGroup: {fileID: 3443589427032990540}
---- !u!114 &3521500170198264981
+--- !u!114 &1618488708936653214
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

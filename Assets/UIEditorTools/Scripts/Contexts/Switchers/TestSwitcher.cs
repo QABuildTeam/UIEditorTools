@@ -1,6 +1,5 @@
 using UIEditorTools.Environment;
 using UIEditorTools.Settings;
-using UIEditorToolsTest.Settings;
 
 namespace UIEditorTools.Controllers
 {

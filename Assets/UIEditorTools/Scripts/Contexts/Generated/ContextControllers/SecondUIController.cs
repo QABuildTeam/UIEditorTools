@@ -6,9 +6,8 @@ using UIEditorTools.Environment;
 using UIEditorTools.Settings;
 using UIEditorTools.Views;
 using System.Threading.Tasks;
-using UIEditorToolsTest.Views;
 
-namespace UIEditorToolsTest.Controllers
+namespace UIEditorTools.Controllers
 {
     public partial class SecondUIController : ContextController
     {

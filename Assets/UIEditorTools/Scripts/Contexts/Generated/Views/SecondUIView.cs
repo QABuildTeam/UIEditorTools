@@ -1,6 +1,6 @@
 using UIEditorTools.Views;
 
-namespace UIEditorToolsTest.Views
+namespace UIEditorTools.Views
 {
     public partial class SecondUIView : UIView
     {

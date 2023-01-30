@@ -9,7 +9,7 @@ using UIEditorTools.Controllers;
 using Views.Common;
 using TMPro;
 
-namespace UIEditorToolsTest.Views
+namespace UIEditorTools.Views
 {
     public partial class SecondUIView : UIView
     {
@@ -33,7 +33,7 @@ namespace UIEditorToolsTest.Views
         }
         [SerializeField]
         private PreformattedTextString message;
-        public string Message
+        public String Message
         {
             set => message.Value = value;
         }

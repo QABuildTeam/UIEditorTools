@@ -11,7 +11,7 @@ namespace Views.Common
         protected string format;
     }
 
-    public class PreformattedText<T> : PreformattedText
+    public class PreformattedText<T> : PreformattedText, IValueDisplay<T>
     {
         public T Value
         {
@@ -19,7 +19,7 @@ namespace Views.Common
         }
     }
 
-    public class PreformattedText<T1, T2> : PreformattedText
+    public class PreformattedText<T1, T2> : PreformattedText, IValueDisplay<T1, T2>
     {
         public void Setup(T1 value1, T2 value2)
         {
