@@ -22,6 +22,16 @@ namespace UIEditorTools.Editor
         {{
             {2}?.Invoke(value);
         }}
+        public bool Active{1}
+        {{
+            get => {0}.gameObject.activeInHierarchy;
+            set => {0}.gameObject.SetActive(value);
+        }}
+        public bool Interactive{1}
+        {{
+            get => {0}.interactable;
+            set => {0}.interactable = value;
+        }}
 ";
             protected override string InitCodeTemplate => @"            {0}.onValueChanged.RemoveAllListeners();
             {0}.onValueChanged.AddListener(On{1}ToggleChanged);
