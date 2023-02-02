@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEditor;
 
-namespace UIEditorTools
+namespace UIEditorTools.Editor
 {
     public class MakeAdaptiveUILayoutUtility : EditorWindow
     {

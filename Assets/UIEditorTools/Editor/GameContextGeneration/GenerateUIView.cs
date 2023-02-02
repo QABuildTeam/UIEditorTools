@@ -9,133 +9,133 @@ namespace UIEditorTools.Editor
 {
     public partial class GameContextGenerationUtility : EditorWindow
     {
-        private static string uiViewHeader = @"
+        private static partial class UIViewGenerator
+        {
+            private static string uiViewHeader = @"
 namespace {0}.Views
 {{
     public partial class {1} : UIView
     {{";
 
-        private static string uiViewInitTemplate = @"        protected override async Task Init()
+            private static string uiViewInitTemplate = @"        protected override async Task Init()
         {{
 {0}
         }}
 ";
 
-        private static string uiViewDoneTemplate = @"        protected override async Task Done()
+            private static string uiViewDoneTemplate = @"        protected override async Task Done()
         {{
 {0}
         }}
 ";
 
-        private static string uiViewFooter = @"    }
+            private static string uiViewFooter = @"    }
 }";
 
-        private static List<GameObjectComponent> BuildComponentList(GameObject view, List<ICodeGenerator> generators)
-        {
-            List<GameObjectComponent> gocList = new List<GameObjectComponent>();
-            void CheckComponentCodeName(Transform go)
+            public static List<GameObjectComponent> BuildComponentList(GameObject view, List<ICodeGenerator> generators)
             {
-                var goName = go.name;
-                // skip object names starting with underscore
-                if (!goName.StartsWith("_"))
+                List<GameObjectComponent> gocList = new List<GameObjectComponent>();
+                void CheckComponentCodeName(Transform go)
                 {
-                    var components = go.GetComponents<MonoBehaviour>();
-                    foreach (var component in components)
+                    var goName = go.name;
+                    // skip object names starting with underscore
+                    if (!goName.StartsWith("_"))
                     {
-                        foreach (var generator in generators)
+                        var components = go.GetComponents<MonoBehaviour>();
+                        foreach (var component in components)
                         {
-                            var name = generator.ComponentControlNameCore(goName, component);
-                            if (!string.IsNullOrEmpty(name))
+                            foreach (var generator in generators)
                             {
-                                var codeName = generator.ComponentControlName(name, component);
-                                int i = 0;
-                                while (i < 1000)
+                                var name = generator.ComponentControlNameCore(goName, component);
+                                if (!string.IsNullOrEmpty(name))
                                 {
-                                    if (!gocList.Any(c => c.codeName.Equals(codeName)))
+                                    var codeName = generator.ComponentControlName(name, component);
+                                    int i = 0;
+                                    while (i < 1000)
                                     {
-                                        var goc = new GameObjectComponent { codeName = codeName, component = component };
-                                        gocList.Add(goc);
-                                        return;
+                                        if (!gocList.Any(c => c.codeName.Equals(codeName)))
+                                        {
+                                            var goc = new GameObjectComponent { codeName = codeName, component = component };
+                                            gocList.Add(goc);
+                                            return;
+                                        }
+                                        ++i;
+                                        codeName = generator.ComponentControlName($"{name}{i}", component);
                                     }
-                                    ++i;
-                                    codeName = generator.ComponentControlName($"{name}{i}", component);
+                                    throw new Exception($"Too many objects with the same name: {name}>={i}");
                                 }
-                                throw new Exception($"Too many objects with the same name: {name}>={i}");
                             }
                         }
                     }
                 }
-            }
 
-            void TraverseChildren(Transform go)
-            {
-                CheckComponentCodeName(go);
-                for (int i = 0; i < go.childCount; ++i)
+                void TraverseChildren(Transform go)
                 {
-                    TraverseChildren(go.GetChild(i));
-                }
-            }
-
-            TraverseChildren(view.transform);
-            return gocList;
-        }
-
-        private static List<string> uiViewInternalUsingClauses = new List<string>
-        {
-            "System",
-            "UnityEngine",
-            "UnityEngine.UI",
-            "System.Threading.Tasks",
-            "UIEditorTools",
-            "UIEditorTools.Views",
-            "UIEditorTools.Environment",
-            "UIEditorTools.Controllers"
-        };
-        private static void GenerateUIView(string filename, string filenameGenerated, string uiViewName, string projectRootNamespace, List<GameObjectComponent> components, List<ICodeGenerator> generators)
-        {
-            if (File.Exists(filename))
-            {
-                Debug.Log($"Skipping main script file {filename} - already exists");
-            }
-            else
-            {
-                var partialUsingClauses = new GenerateUsingClauses(new List<string> { "UIEditorTools.Views" });
-                Directory.CreateDirectory(Path.GetDirectoryName(filename));
-                Debug.Log($"Creating empty script file {filename}");
-                using (var stream = new StreamWriter(filename))
-                {
-                    stream.Write(partialUsingClauses.GetUsingClauses());
-                    stream.WriteLine(string.Format(uiViewHeader, projectRootNamespace, uiViewName));
-                    stream.WriteLine(uiViewFooter);
-                }
-            }
-            Directory.CreateDirectory(Path.GetDirectoryName(filenameGenerated));
-            Debug.Log($"Generating UIView {uiViewName} to {filenameGenerated}");
-            var usingClauses = new GenerateUsingClauses(uiViewInternalUsingClauses);
-            using (var stream = new StreamWriter(filenameGenerated))
-            {
-                string body = string.Empty;
-                string init = string.Empty;
-                string done = string.Empty;
-                foreach (var component in components)
-                {
-                    foreach (var generator in generators)
+                    CheckComponentCodeName(go);
+                    for (int i = 0; i < go.childCount; ++i)
                     {
-                        foreach (var usingClause in generator.UsingCode(component.codeName, component.component))
-                        {
-                            usingClauses.Add(usingClause);
-                        }
-                        body += generator.BodyCode(component.codeName, component.component);
-                        init += generator.InitCode(component.codeName, component.component);
-                        done += generator.DoneCode(component.codeName, component.component);
+                        TraverseChildren(go.GetChild(i));
                     }
                 }
-                stream.Write(usingClauses.GetUsingClauses());
-                stream.WriteLine(string.Format(uiViewHeader, projectRootNamespace, uiViewName));
-                stream.WriteLine(body);
-                stream.WriteLine(uiViewInitTemplate, init);
-                stream.WriteLine(uiViewDoneTemplate, done);
-                stream.WriteLine(uiViewFooter);
+
+                TraverseChildren(view.transform);
+                return gocList;
+            }
+
+            private static List<string> internalUsingClauses = new List<string>
+            {
+                "System",
+                "System.Threading.Tasks",
+                "UnityEngine",
+                "UnityEngine.UI",
+                "ACFW.Views"
+            };
+            public static void GenerateUIView(string filename, string filenameGenerated, string uiViewName, string projectRootNamespace, List<GameObjectComponent> components, List<ICodeGenerator> generators)
+            {
+                if (File.Exists(filename))
+                {
+                    Debug.Log($"Skipping main script file {filename} - already exists");
+                }
+                else
+                {
+                    var partialUsingClauses = new GenerateUsingClauses(new List<string> { "ACFW.Views" });
+                    Directory.CreateDirectory(Path.GetDirectoryName(filename));
+                    Debug.Log($"Creating empty script file {filename}");
+                    using (var stream = new StreamWriter(filename))
+                    {
+                        stream.Write(partialUsingClauses.GetUsingClauses());
+                        stream.WriteLine(string.Format(uiViewHeader, projectRootNamespace, uiViewName));
+                        stream.WriteLine(uiViewFooter);
+                    }
+                }
+                Directory.CreateDirectory(Path.GetDirectoryName(filenameGenerated));
+                Debug.Log($"Generating UIView {uiViewName} to {filenameGenerated}");
+                var usingClauses = new GenerateUsingClauses(internalUsingClauses);
+                using (var stream = new StreamWriter(filenameGenerated))
+                {
+                    string body = string.Empty;
+                    string init = string.Empty;
+                    string done = string.Empty;
+                    foreach (var component in components)
+                    {
+                        foreach (var generator in generators)
+                        {
+                            foreach (var usingClause in generator.UsingCode(component.codeName, component.component))
+                            {
+                                usingClauses.Add(usingClause);
+                            }
+                            body += generator.BodyCode(component.codeName, component.component);
+                            init += generator.InitCode(component.codeName, component.component);
+                            done += generator.DoneCode(component.codeName, component.component);
+                        }
+                    }
+                    stream.Write(usingClauses.GetUsingClauses());
+                    stream.WriteLine(string.Format(uiViewHeader, projectRootNamespace, uiViewName));
+                    stream.WriteLine(body);
+                    stream.WriteLine(uiViewInitTemplate, init);
+                    stream.WriteLine(uiViewDoneTemplate, done);
+                    stream.WriteLine(uiViewFooter);
+                }
             }
         }
     }

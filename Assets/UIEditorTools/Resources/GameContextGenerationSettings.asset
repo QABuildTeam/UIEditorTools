@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2adab414c6fe834e8ae94b2ccd57014, type: 3}
   m_Name: GameContextGenerationSettings
   m_EditorClassIdentifier: 
-  projectRootNamespace: UIEditorTools
-  uiViewFolder: Assets/UIEditorTools/Scripts/Contexts/Generated/Views
-  uiControllerFolder: Assets/UIEditorTools/Scripts/Contexts/Generated/ContextControllers
-  uiPairFolder: Assets/UIEditorTools/Scripts/Contexts/Generated/ViewControllerPairs
-  uiPairAssetFolder: Assets/UIEditorTools/Settings/GameContexts
-  gameContextFolder: Assets/UIEditorTools/Scripts/Contexts/Generated/GameContexts
-  gameContextAssetFolder: Assets/UIEditorTools/Settings/GameContexts
+  projectRootNamespace: ACFW.Example
+  uiViewFolder: Assets/AppContextFramework/Example/Scripts/Contexts/Generated/Views
+  uiControllerFolder: Assets/AppContextFramework/Example/Scripts/Contexts/Generated/ContextControllers
+  uiPairFolder: Assets/AppContextFramework/Example/Scripts/Contexts/Generated/ViewControllerPairs
+  uiPairAssetFolder: Assets/AppContextFramework/Example/Settings/GameContexts
+  gameContextFolder: Assets/AppContextFramework/Example/Scripts/Contexts/Generated/GameContexts
+  gameContextAssetFolder: Assets/AppContextFramework/Example/Settings/GameContexts

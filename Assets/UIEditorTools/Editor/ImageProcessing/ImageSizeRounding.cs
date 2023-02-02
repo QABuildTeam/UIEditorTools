@@ -14,7 +14,7 @@ namespace UIEditorTools.Editor
             EditorWindow.GetWindow(typeof(ImageSizeRounding));
         }
 
-        private string sourceDirectory = "Assets/UIEditorTools/ResourceData/Images";
+        private string sourceDirectory = "Assets/AppContextFramework/Example/ResourceData/Images";
 
         private void OnGUI()
         {

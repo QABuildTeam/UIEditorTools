@@ -1,6 +1,5 @@
-using UnityEngine.UI;
 using UnityEditor;
-using Views.Common;
+using ACFW.Views;
 using System.Collections.Generic;
 
 namespace UIEditorTools.Editor
@@ -10,7 +9,7 @@ namespace UIEditorTools.Editor
         [CodeGeneration]
         private class GenerateUIViewOnPreformattedTextIntRange : GenerateUIViewOnIValueDisplay<PreformattedTextIntRange, IntRange>
         {
-            protected override List<string> UsingClauses => new List<string> { "Views.Common" };
+            protected override List<string> UsingClauses => new List<string> { "ACFW.Views" };
         }
     }
 }

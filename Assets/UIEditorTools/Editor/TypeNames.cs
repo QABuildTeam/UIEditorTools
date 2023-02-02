@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Utility.CodeGen
+namespace UIEditorTools.CodeGen
 {
     public static class TypeNames
     {

@@ -1,0 +1,118 @@
+using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
+
+namespace ACFW.Views
+{
+    public class UIView : MonoBehaviour, IView
+    {
+        [SerializeField]
+        private bool hideOnOpen = false;
+        public bool HideOnOpen => hideOnOpen;
+
+        protected IUIViewAddon[] addons;
+        protected IUIViewAddon[] Addons => addons == null ? (addons = GetComponents<IUIViewAddon>()) : addons;
+
+        public UniversalEnvironment Environment { get; set; }
+
+        protected virtual Task Init()
+        {
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task Done()
+        {
+            return Task.CompletedTask;
+        }
+
+        protected bool isVisible = false;
+
+        public virtual async Task Hide()
+        {
+            if (!isVisible || !gameObject.activeInHierarchy)
+            {
+                return;
+            }
+            isVisible = false;
+            if (Addons != null)
+            {
+                await Task.WhenAll(Addons.Select(a => a.DoHideTask(Environment)));
+            }
+            await Done();
+            Environment = null;
+            gameObject.SetActive(false);
+        }
+
+        public virtual async Task Show(bool force = false)
+        {
+            if (isVisible)
+            {
+                return;
+            }
+            if (hideOnOpen && !force)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+            gameObject.SetActive(true);
+            await Init();
+            if (Addons != null)
+            {
+                await Task.WhenAll(Addons.Select(a => a.DoShowTask(Environment)));
+            }
+            isVisible = true;
+        }
+
+        public virtual async Task PreShow()
+        {
+            if (isVisible)
+            {
+                return;
+            }
+            if (Addons != null)
+            {
+                gameObject.SetActive(true);
+                await Task.WhenAll(Addons.Select(a => a.DoPreShowTask(Environment)));
+                gameObject.SetActive(false);
+            }
+        }
+
+        public virtual async Task PostShow()
+        {
+            if (!isVisible || !gameObject.activeInHierarchy)
+            {
+                return;
+            }
+            if (Addons != null)
+            {
+                await Task.WhenAll(Addons.Select(a => a.DoPostShowTask(Environment)));
+            }
+        }
+
+        public virtual async Task PreHide()
+        {
+            if (!isVisible || !gameObject.activeInHierarchy)
+            {
+                return;
+            }
+            if (Addons != null)
+            {
+                await Task.WhenAll(Addons.Select(a => a.DoPreHideTask(Environment)));
+            }
+        }
+
+        public virtual async Task PostHide()
+        {
+            if (isVisible)
+            {
+                return;
+            }
+            if (Addons != null)
+            {
+                gameObject.SetActive(true);
+                await Task.WhenAll(Addons.Select(a => a.DoPostHideTask(Environment)));
+                gameObject.SetActive(false);
+            }
+        } 
+    }
+}

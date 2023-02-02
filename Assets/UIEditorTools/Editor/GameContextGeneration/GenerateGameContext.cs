@@ -1,29 +1,25 @@
 using System;
 using System.IO;
-using System.Reflection;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UIEditorTools.Controllers;
+using ACFW.Controllers;
 
 namespace UIEditorTools.Editor
 {
     public partial class GameContextGenerationUtility : EditorWindow
     {
         private static string gameContextTemplate = @"
-namespace {1}.Settings
+namespace {1}.Controllers
 {{
     public class {0} : GameContext
     {{
     }}
 }}";
-        private static List<string> gameContextInternalUsingClauses = new List<string>
+        private static List<string> internalUsingClauses = new List<string>
         {
-            "UnityEngine",
-            "UIEditorTools",
-            "UIEditorTools.Settings"
+            "ACFW.Controllers"
         };
         private static void GenerateGameContext(string filename, string projectRootNamespace, string gameContextName)
         {
@@ -31,7 +27,7 @@ namespace {1}.Settings
             Debug.Log($"Creating game context script {filename}");
             using (var stream = new StreamWriter(filename))
             {
-                var usingClauses = new GenerateUsingClauses(gameContextInternalUsingClauses);
+                var usingClauses = new GenerateUsingClauses(internalUsingClauses);
                 stream.Write(usingClauses.GetUsingClauses());
                 stream.WriteLine(string.Format(gameContextTemplate, gameContextName, projectRootNamespace));
             }
@@ -39,7 +35,7 @@ namespace {1}.Settings
 
         private static void CreateGameContextAsset(string gameContextName, string projectRootNamespace, string assetFilename, string uiPairGUID)
         {
-            var gameContextType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName.EndsWith($"{projectRootNamespace}.Settings.{gameContextName}"));
+            var gameContextType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName.EndsWith($"{projectRootNamespace}.Controllers.{gameContextName}"));
             if (gameContextType != null)
             {
                 var uiPairPath = AssetDatabase.GUIDToAssetPath(uiPairGUID);

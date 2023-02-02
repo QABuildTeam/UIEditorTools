@@ -1,19 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 namespace UIEditorTools.Editor
 {
     public class GameContextGenerationSettings : ScriptableObject
     {
-        public string projectRootNamespace = "UIEditorTools";
+        public string projectRootNamespace = "ACFW.Example";
 
-        public string uiViewFolder = "Assets/UIEditorTools/Scripts/Contexts/Generated/Views";
-        public string uiControllerFolder = "Assets/UIEditorTools/Scripts/Contexts/Generated/ContextControllers";
-        public string uiPairFolder = "Assets/UIEditorTools/Scripts/Contexts/Generated/ViewControllerPairs";
-        public string uiPairAssetFolder = "Assets/UIEditorTools/Settings/GameContexts";
-        public string gameContextFolder = "Assets/UIEditorTools/Scripts/Contexts/Generated/GameContexts";
-        public string gameContextAssetFolder = "Assets/UIEditorTools/Settings/GameContexts";
+        public string uiViewFolder = "Assets/AppContextFramework/Example/Scripts/Contexts/Generated/Views";
+        public string uiControllerFolder = "Assets/AppContextFramework/Example/Scripts/Contexts/Generated/ContextControllers";
+        public string uiPairFolder = "Assets/AppContextFramework/Example/Scripts/Contexts/Generated/ViewControllerPairs";
+        public string uiPairAssetFolder = "Assets/AppContextFramework/Example/Settings/GameContexts";
+        public string gameContextFolder = "Assets/AppContextFramework/Example/Scripts/Contexts/Generated/GameContexts";
+        public string gameContextAssetFolder = "Assets/AppContextFramework/Example/Settings/GameContexts";
     }
 }

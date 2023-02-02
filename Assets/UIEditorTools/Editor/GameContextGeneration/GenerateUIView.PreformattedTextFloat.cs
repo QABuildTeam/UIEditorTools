@@ -1,5 +1,5 @@
 using UnityEditor;
-using Views.Common;
+using ACFW.Views;
 using System.Collections.Generic;
 
 namespace UIEditorTools.Editor
@@ -9,7 +9,7 @@ namespace UIEditorTools.Editor
         [CodeGeneration]
         private class GenerateUIViewOnPreformattedTextFloat : GenerateUIViewOnIValueDisplay<PreformattedTextFloat, float>
         {
-            protected override List<string> UsingClauses => new List<string> { "Views.Common" };
+            protected override List<string> UsingClauses => new List<string> { "ACFW.Views" };
         }
     }
 }

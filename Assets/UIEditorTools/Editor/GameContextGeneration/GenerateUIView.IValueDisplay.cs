@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEditor;
-using Views.Common;
-using System.Collections.Generic;
+using ACFW.Views;
 
 namespace UIEditorTools.Editor
 {

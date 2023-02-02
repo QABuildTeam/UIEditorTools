@@ -15,20 +15,19 @@ namespace UIEditorTools.Editor
         [MenuItem("Tools/UI Editor Tools/Code generation/Generate Game Context", false, 0)]
         private static void ShowWIndow()
         {
-            //EditorWindow.GetWindow(typeof(GameContextGenerationUtility));
             EditorWindow.GetWindow<GameContextGenerationUtility>().LoadSettings();
         }
 
-        private string projectRootNamespace = "UIEditorTools";
+        private string projectRootNamespace = "ACFW.Example";
 
         private GameObject sourceView;
 
-        private string uiViewFolder = "Assets/UIEditorTools/Scripts/Contexts/Generated/Views";
-        private string uiControllerFolder = "Assets/UIEditorTools/Scripts/Contexts/Generated/ContextControllers";
-        private string uiPairFolder = "Assets/UIEditorTools/Scripts/Contexts/Generated/ViewControllerPairs";
-        private string uiPairAssetFolder = "Assets/UIEditorTools/Settings/GameContexts";
-        private string gameContextFolder = "Assets/UIEditorTools/Scripts/Contexts/Generated/GameContexts";
-        private string gameContextAssetFolder = "Assets/UIEditorTools/Settings/GameContexts";
+        private string uiViewFolder = "Assets/AppContextFramework/Example/Scripts/Contexts/Generated/Views";
+        private string uiControllerFolder = "Assets/AppContextFramework/Example/Scripts/Contexts/Generated/ContextControllers";
+        private string uiPairFolder = "Assets/AppContextFramework/Example/Scripts/Contexts/Generated/ViewControllerPairs";
+        private string uiPairAssetFolder = "Assets/AppContextFramework/Example/Settings/GameContexts";
+        private string gameContextFolder = "Assets/AppContextFramework/Example/Scripts/Contexts/Generated/GameContexts";
+        private string gameContextAssetFolder = "Assets/AppContextFramework/Example/Settings/GameContexts";
 
         private bool generateUIView = true;
         private bool generateUIController = true;
@@ -182,9 +181,9 @@ namespace UIEditorTools.Editor
                 {
                     CorrectAssetEditing.EditUIAssetAtPath(viewAssetPath, (view) =>
                     {
-                        var componentList = BuildComponentList(view, generators);
+                        var componentList = UIViewGenerator.BuildComponentList(view, generators);
                         var (filename, filenameGenerated) = UIViewFilename(uiViewFolder, viewName);
-                        GenerateUIView(filename, filenameGenerated, viewName, projectRootNamespace, componentList, generators);
+                        UIViewGenerator.GenerateUIView(filename, filenameGenerated, viewName, projectRootNamespace, componentList, generators);
                     });
                 }
                 // add UIView to prefab
@@ -192,15 +191,15 @@ namespace UIEditorTools.Editor
                 {
                     CorrectAssetEditing.EditUIAssetAtPath(viewAssetPath, (view) =>
                     {
-                        var viewComponent = AddUIView(view, viewName, projectRootNamespace);
+                        var viewComponent = UIViewGenerator.AddUIView(view, viewName, projectRootNamespace);
                         if (viewComponent != null)
                         {
-                            var componentList = BuildComponentList(view, generators);
-                            FillReferences(viewComponent, componentList, generators);
+                            var componentList = UIViewGenerator.BuildComponentList(view, generators);
+                            UIViewGenerator.FillReferences(viewComponent, componentList, generators);
                         }
                         PrefabUtility.ApplyPrefabInstance(view, InteractionMode.AutomatedAction);
                     });
-                    MakeAddressable(viewAssetPath);
+                    UIViewGenerator.MakeAddressable(viewAssetPath);
                     AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
                 }
                 // generate UIController
@@ -209,9 +208,9 @@ namespace UIEditorTools.Editor
                     CorrectAssetEditing.EditUIAssetAtPath(viewAssetPath, (view) =>
                     {
                         string viewName = view.name;
-                        var componentList = BuildComponentList(view, generators);
+                        var componentList = UIViewGenerator.BuildComponentList(view, generators);
                         var (controllerName, filename) = UIControllerName(uiControllerFolder, viewName);
-                        GenerateUIController(filename, projectRootNamespace, controllerName, viewName, componentList, generators);
+                        UIControllerGenerator.GenerateUIController(filename, projectRootNamespace, controllerName, viewName, componentList, generators);
                     });
                 }
                 // generate UIPair
@@ -220,9 +219,9 @@ namespace UIEditorTools.Editor
                     var guid = AssetDatabase.GUIDFromAssetPath(viewAssetPath);
                     var (controllerName, _) = UIControllerName(uiControllerFolder, viewName);
                     var (uiPairName, uiPairFilename, assetFilename) = UIPairName(uiPairFolder, uiPairAssetFolder, viewName);
-                    GenerateUIPair(uiPairFilename, projectRootNamespace, uiPairName, controllerName, viewName);
+                    UIPairGenerator.GenerateUIPair(uiPairFilename, projectRootNamespace, uiPairName, controllerName, viewName);
                     AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
-                    CreateUIPairAsset(uiPairName, projectRootNamespace, assetFilename, guid.ToString());
+                    UIPairGenerator.CreateUIPairAsset(uiPairName, projectRootNamespace, assetFilename, guid.ToString());
                     AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
                 }
                 // generate game context
