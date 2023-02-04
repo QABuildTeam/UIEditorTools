@@ -18,7 +18,7 @@ namespace ACFW.Example.Controllers
 
         private void OnSwitchToNextContext()
         {
-            EventManager.Get<ContextEvents>().ActivateContext?.Invoke(nameof(SecondGameContext));
+            EventManager.Get<ContextEvents>().ActivateContext?.Invoke(nameof(SecondAppContext));
         }
     }
 }

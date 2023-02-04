@@ -18,7 +18,7 @@ namespace ACFW.Example.Controllers
 
         private void OnGotoStart()
         {
-            EventManager.Get<ContextEvents>().ActivateContext?.Invoke(nameof(TestGameContext));
+            EventManager.Get<ContextEvents>().ActivateContext?.Invoke(nameof(TestAppContext));
         }
     }
 }

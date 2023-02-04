@@ -6,7 +6,7 @@ namespace ACFW.Controllers
 {
     public class ContextManager : MonoBehaviour
     {
-        private GameContextSelector selector;
+        private AppContextSelector selector;
         private UniversalEnvironment environment;
         private UniversalEventManager EventManager => environment?.Get<UniversalEventManager>();
 
@@ -17,7 +17,7 @@ namespace ACFW.Controllers
         [SerializeField]
         private MasterCanvasManager masterCanvasManager;
 
-        public void Setup(GameContextSelector selector, GameContext[] gameContexts, UniversalEnvironment environment)
+        public void Setup(AppContextSelector selector, AppContext[] appContexts, UniversalEnvironment environment)
         {
             this.selector = selector;
             this.environment = environment;
@@ -31,9 +31,9 @@ namespace ACFW.Controllers
                 switcher.Init(environment);
             }
             EventManager.Get<ContextEvents>().ActivateContext += OnActivateContext;
-            foreach (var gameContext in gameContexts)
+            foreach (var appContext in appContexts)
             {
-                this.selector.RegisterContext(gameContext.Id, gameContext.GetContextController(worldManager, uiManager, environment));
+                this.selector.RegisterContext(appContext.Id, appContext.GetAppContextController(worldManager, uiManager, environment));
             }
         }
 
