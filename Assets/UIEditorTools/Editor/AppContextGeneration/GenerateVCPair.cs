@@ -26,7 +26,7 @@ namespace {0}.Controllers
 }}";
             private static List<string> internalUsingClauses = new List<string>
             {
-                "UnityEngine",
+                "ACFW",
                 "ACFW.Controllers"
             };
             public static void GenerateVCPair(string scriptFilename, string projectRootNamespace, string vcPairName, string controllerName, string viewName)
