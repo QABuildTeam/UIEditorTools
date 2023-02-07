@@ -174,7 +174,7 @@ namespace ACFW.Controllers
                         }
                         catch (System.Exception ex)
                         {
-                            Debug.LogError($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Could not successfully pre-close context {id}: {ex}");
+                            Debug.LogError($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Could not successfully pre-close context {CurrentContext.id}: {ex}");
                         }
                     }
                     try
@@ -195,7 +195,7 @@ namespace ACFW.Controllers
                         }
                         catch (System.Exception ex)
                         {
-                            Debug.LogError($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Could not successfully close context {id}: {ex}");
+                            Debug.LogError($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Could not successfully close context {CurrentContext.id}: {ex}");
                         }
                     }
                     try
