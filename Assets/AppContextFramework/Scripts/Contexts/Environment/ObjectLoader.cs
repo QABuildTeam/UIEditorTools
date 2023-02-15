@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -47,6 +48,7 @@ namespace ACFW.Views
 
         public void Dispose()
         {
+            (Component as IDisposable)?.Dispose();
             Component = default;
             LoadedObject = null;
             parentAnchor = null;

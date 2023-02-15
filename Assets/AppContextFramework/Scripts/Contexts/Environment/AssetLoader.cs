@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -5,7 +6,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace ACFW.Views
 {
-    public class AssetLoader<T> where T:class
+    public class AssetLoader<T> : IDisposable where T:class
     {
         public T Asset { get; private set; } = null;
         private AsyncOperationHandle<T> handle;
