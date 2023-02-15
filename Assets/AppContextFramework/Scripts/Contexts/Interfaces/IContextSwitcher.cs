@@ -1,10 +1,8 @@
-using ACFW.Environment;
-
 namespace ACFW
 {
     public interface IContextSwitcher
     {
-        void Init(UniversalEnvironment environment);
+        void Init(IServiceLocator environment);
         void Done();
     }
 }

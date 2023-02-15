@@ -5,7 +5,7 @@ namespace ACFW.Views
 {
     public class WorldView : MonoBehaviour, IView
     {
-        public UniversalEnvironment Environment { get; set; }
+        public IServiceLocator Environment { get; set; }
 
         public bool HideOnOpen => false;
 

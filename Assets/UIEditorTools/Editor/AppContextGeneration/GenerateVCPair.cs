@@ -18,7 +18,7 @@ namespace {0}.Controllers
 {{
     public class {1} : ViewControllerPair<{2}, {3}>
     {{
-        protected override {2} GetContextController({3} view, UniversalEnvironment environment)
+        protected override {2} GetContextController({3} view, IServiceLocator environment)
         {{
             return new {2}(view, environment);
         }}

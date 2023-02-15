@@ -1,15 +1,14 @@
 using System.Threading.Tasks;
-using ACFW.Environment;
 
 namespace ACFW.Views
 {
     public interface IUIViewAddon
     {
-        Task DoPreShowTask(UniversalEnvironment environment);
-        Task DoShowTask(UniversalEnvironment environment);
-        Task DoPostShowTask(UniversalEnvironment environment);
-        Task DoPreHideTask(UniversalEnvironment environment);
-        Task DoHideTask(UniversalEnvironment environment);
-        Task DoPostHideTask(UniversalEnvironment environment);
+        Task DoPreShowTask(IServiceLocator environment);
+        Task DoShowTask(IServiceLocator environment);
+        Task DoPostShowTask(IServiceLocator environment);
+        Task DoPreHideTask(IServiceLocator environment);
+        Task DoHideTask(IServiceLocator environment);
+        Task DoPostHideTask(IServiceLocator environment);
     }
 }

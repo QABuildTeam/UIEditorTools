@@ -2,7 +2,7 @@ namespace ACFW
 {
     public interface IApplicationEnvironment
     {
-        UniversalEnvironment Environment { get; }
+        IServiceLocator Environment { get; }
         void Initialize();
         void Run();
     }

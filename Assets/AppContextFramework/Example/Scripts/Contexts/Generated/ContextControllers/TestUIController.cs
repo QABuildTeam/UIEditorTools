@@ -7,11 +7,11 @@ namespace ACFW.Example.Controllers
 {
     public partial class TestUIController : ContextController
     {
-        private UniversalEventManager EventManager => environment.Get<UniversalEventManager>();
-        private UniversalSettingsManager SettingsManager => environment.Get<UniversalSettingsManager>();
+        private IEventManager EventManager => environment.Get<IEventManager>();
+        private ISettingsManager SettingsManager => environment.Get<ISettingsManager>();
 
         private TestUIView TestView => (TestUIView)view;
-        public TestUIController(TestUIView view, UniversalEnvironment environment) : base(view, environment)
+        public TestUIController(TestUIView view, IServiceLocator environment) : base(view, environment)
         {
         }
 

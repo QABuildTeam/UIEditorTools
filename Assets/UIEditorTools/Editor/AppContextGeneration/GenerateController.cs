@@ -15,11 +15,11 @@ namespace {0}.Controllers
 {{
     public partial class {1} : ContextController
     {{
-        private UniversalEventManager EventManager => environment.Get<UniversalEventManager>();
-        private UniversalSettingsManager SettingsManager => environment.Get<UniversalSettingsManager>();
+        private IEventManager EventManager => environment.Get<IEventManager>();
+        private ISettingsManager SettingsManager => environment.Get<ISettingsManager>();
 
         private {2} {3} => ({2})view;
-        public {1}({2} view, UniversalEnvironment environment) : base(view, environment)
+        public {1}({2} view, IServiceLocator environment) : base(view, environment)
         {{
         }}
 ";

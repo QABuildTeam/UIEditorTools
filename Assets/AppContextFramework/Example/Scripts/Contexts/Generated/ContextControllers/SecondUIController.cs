@@ -7,11 +7,11 @@ namespace ACFW.Example.Controllers
 {
     public partial class SecondUIController : ContextController
     {
-        private UniversalEventManager EventManager => environment.Get<UniversalEventManager>();
-        private UniversalSettingsManager SettingsManager => environment.Get<UniversalSettingsManager>();
+        private IEventManager EventManager => environment.Get<IEventManager>();
+        private ISettingsManager SettingsManager => environment.Get<ISettingsManager>();
 
         private SecondUIView SecondView => (SecondUIView)view;
-        public SecondUIController(SecondUIView view, UniversalEnvironment environment) : base(view, environment)
+        public SecondUIController(SecondUIView view, IServiceLocator environment) : base(view, environment)
         {
         }
 

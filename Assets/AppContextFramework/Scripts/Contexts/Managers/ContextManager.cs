@@ -7,8 +7,8 @@ namespace ACFW.Controllers
     public class ContextManager : MonoBehaviour
     {
         private AppContextSelector selector;
-        private UniversalEnvironment environment;
-        private UniversalEventManager EventManager => environment?.Get<UniversalEventManager>();
+        private IServiceLocator environment;
+        private IEventManager EventManager => environment?.Get<IEventManager>();
 
         [SerializeField]
         private WorldTransformManager worldManager;
@@ -17,7 +17,7 @@ namespace ACFW.Controllers
         [SerializeField]
         private MasterCanvasManager masterCanvasManager;
 
-        public void Setup(AppContextSelector selector, AppContext[] appContexts, UniversalEnvironment environment)
+        public void Setup(AppContextSelector selector, AppContext[] appContexts, IServiceLocator environment)
         {
             this.selector = selector;
             this.environment = environment;

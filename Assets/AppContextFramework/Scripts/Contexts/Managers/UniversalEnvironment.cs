@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ACFW
+namespace ACFW.Controllers
 {
     public class UniversalEnvironment : IServiceLocator
     {

@@ -9,7 +9,7 @@ namespace ACFW.Controllers
 
         protected bool isOpen = false;
         public bool IsOpen() => isOpen;
-        protected UniversalEnvironment environment;
+        protected IServiceLocator environment;
 
         public virtual Task Open()
         {
@@ -69,7 +69,7 @@ namespace ACFW.Controllers
             }
         }
 
-        public ContextController(IView view, UniversalEnvironment environment)
+        public ContextController(IView view, IServiceLocator environment)
         {
             this.view = view;
             this.environment = environment;

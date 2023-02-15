@@ -10,8 +10,8 @@ namespace ACFW.Startup
         private readonly SettingsList settings;
         private readonly AppContextList appContextList;
 
-        private UniversalEnvironment environment;
-        public UniversalEnvironment Environment => environment;
+        private IServiceLocator environment;
+        public IServiceLocator Environment => environment;
 
         public ApplicationEnvironment(ContextManager contextManager, SettingsList settings, AppContextList appContextList)
         {
@@ -28,14 +28,14 @@ namespace ACFW.Startup
 
         public virtual void Run()
         {
-            environment.Get<UniversalEventManager>().Get<ContextEvents>().ActivateContext(appContextList.appContexts[0].Id);
+            environment.Get<IEventManager>().Get<ContextEvents>().ActivateContext(appContextList.appContexts[0].Id);
         }
 
         protected virtual void InitializeGlobals()
         {
             environment = new UniversalEnvironment();
-            environment.Add<UniversalEventManager>(new UniversalEventManager());
-            environment.Add<UniversalSettingsManager>(new UniversalSettingsManager(settings.settings));
+            environment.Add<IEventManager>(new UniversalEventManager());
+            environment.Add<ISettingsManager>(new UniversalSettingsManager(settings.Settings));
         }
 
         protected virtual void InitializeSceneManager()

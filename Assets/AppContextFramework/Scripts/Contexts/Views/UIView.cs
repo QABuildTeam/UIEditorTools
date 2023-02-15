@@ -13,7 +13,7 @@ namespace ACFW.Views
         protected IUIViewAddon[] addons;
         protected IUIViewAddon[] Addons => addons == null ? (addons = GetComponents<IUIViewAddon>()) : addons;
 
-        public UniversalEnvironment Environment { get; set; }
+        public IServiceLocator Environment { get; set; }
 
         protected virtual Task Init()
         {

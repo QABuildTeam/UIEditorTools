@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace ACFW
 {
-    public class UniversalSettingsManager : IServiceProvider
+    public class UniversalSettingsManager : ISettingsManager, IServiceProvider
     {
-        protected Dictionary<System.Type, ScriptableObject> settings = new Dictionary<System.Type, ScriptableObject>();
+        protected Dictionary<System.Type, ISettings> settings = new Dictionary<System.Type, ISettings>();
 
-        public UniversalSettingsManager(IEnumerable<ScriptableObject> initialSettings)
+        public UniversalSettingsManager(IEnumerable<ISettings> initialSettings)
         {
             if (initialSettings != null)
             {
@@ -18,7 +17,7 @@ namespace ACFW
             }
         }
 
-        private void Add(ScriptableObject setting)
+        private void Add(ISettings setting)
         {
             var type = setting.GetType();
             if (!settings.ContainsKey(type))
@@ -27,7 +26,7 @@ namespace ACFW
             }
         }
 
-        public T Get<T>() where T : ScriptableObject
+        public T Get<T>() where T : ISettings
         {
             if(settings.TryGetValue(typeof(T), out var setting))
             {

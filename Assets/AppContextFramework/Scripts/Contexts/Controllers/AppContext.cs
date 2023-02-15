@@ -8,7 +8,7 @@ namespace ACFW.Controllers
         public ViewControllerPair[] worldObjects;
         public ViewControllerPair[] uiObjects;
 
-        public virtual AppContextController GetAppContextController(ITransformManager worldManager, ITransformManager uiManager, UniversalEnvironment global)
+        public virtual AppContextController GetAppContextController(ITransformManager worldManager, ITransformManager uiManager, IServiceLocator global)
         {
             return new AppContextController(worldObjects, worldManager, uiObjects, uiManager, sceneName, global);
         }

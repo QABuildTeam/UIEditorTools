@@ -5,12 +5,12 @@ namespace ACFW.Controllers
 {
     public abstract class AbstractContextSwitcher : MonoBehaviour, IContextSwitcher
     {
-        protected UniversalEnvironment environment;
-        protected UniversalEventManager EventManager => environment?.Get<UniversalEventManager>();
+        protected IServiceLocator environment;
+        protected IEventManager EventManager => environment?.Get<IEventManager>();
 
         [SerializeField]
         protected bool disableSwitch;
-        public void Init(UniversalEnvironment environment)
+        public void Init(IServiceLocator environment)
         {
             this.environment = environment;
             if (!disableSwitch)

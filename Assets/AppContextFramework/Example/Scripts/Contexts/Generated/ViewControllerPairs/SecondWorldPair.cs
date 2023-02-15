@@ -6,7 +6,7 @@ namespace ACFW.Example.Controllers
 {
     public class SecondWorldPair : ViewControllerPair<SecondWorldController, SecondWorldView>
     {
-        protected override SecondWorldController GetContextController(SecondWorldView view, UniversalEnvironment environment)
+        protected override SecondWorldController GetContextController(SecondWorldView view, IServiceLocator environment)
         {
             return new SecondWorldController(view, environment);
         }

@@ -16,21 +16,21 @@ namespace ACFW.Views
         private int workingSortingOrder = 0;
         [SerializeField]
         private CanvasGroup canvasGroup;
-        public override Task DoPreShowTask(UniversalEnvironment environment)
+        public override Task DoPreShowTask(IServiceLocator environment)
         {
             canvas.sortingOrder = initialSortingOrder;
             canvasGroup.alpha = 0;
             return base.DoPreShowTask(environment);
         }
 
-        public override Task DoPostShowTask(UniversalEnvironment environment)
+        public override Task DoPostShowTask(IServiceLocator environment)
         {
             canvas.sortingOrder = workingSortingOrder;
             canvasGroup.alpha = 1;
             return base.DoPostShowTask(environment);
         }
 
-        public override Task DoPreHideTask(UniversalEnvironment environment)
+        public override Task DoPreHideTask(IServiceLocator environment)
         {
             canvas.sortingOrder = workingSortingOrder;
             return base.DoPreHideTask(environment);
