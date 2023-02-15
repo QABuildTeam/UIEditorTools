@@ -66,31 +66,85 @@ namespace ACFW.Controllers
         }
         #endregion
 
+        #region ContextOverlays
+        private class ContextOverlays
+        {
+            private List<ContextItem> overlays;
+            public ContextOverlays(int capacity = 10)
+            {
+                overlays = new List<ContextItem>(capacity);
+            }
+
+            public int Contains(string id)
+            {
+                for (int i = 0; i < overlays.Count; ++i)
+                {
+                    if (overlays[i].id == id)
+                    {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            public void Add(ContextItem item)
+            {
+                if (Contains(item.id) < 0)
+                {
+                    overlays.Add(item);
+                }
+            }
+
+            public void Remove(ContextItem item)
+            {
+                var i = Contains(item.id);
+                if (i >= 0)
+                {
+                    overlays.RemoveAt(i);
+                }
+            }
+        }
+        #endregion
+
         private readonly Dictionary<string, AppContextController> contextRegistry = new Dictionary<string, AppContextController>();
 
         private ContextStack stack;
         private ContextStack Stack => stack;
         private ContextItem CurrentContext => Stack.Current;
         public string CurrentContextId => CurrentContext.id;
-        private object _sync = new object();
-        private Queue<string> contextQueue;
 
-        public AppContextSelector(int maxContentDepth = 5)
+        private ContextOverlays overlays;
+
+        private enum ContextAction
         {
-            stack = new ContextStack(maxContentDepth);
-            contextQueue = new Queue<string>();
+            Switch = 1,
+            OpenOverlay = 2,
+            CloseOverlay = 3
+        }
+        private struct ContextActionItem
+        {
+            public string id;
+            public ContextAction action;
+        }
+        private object _sync = new object();
+        private Queue<ContextActionItem> contextQueue;
+
+        public AppContextSelector(int maxStackDepth = 5)
+        {
+            stack = new ContextStack(maxStackDepth);
+            overlays = new ContextOverlays();
+            contextQueue = new Queue<ContextActionItem>();
         }
 
         public void RegisterContext(string id, AppContextController context)
         {
             if (!string.IsNullOrEmpty(id) && !contextRegistry.ContainsKey(id))
             {
-                //Debug.Log($"[{GetType().Name}.{nameof(Register)}] Registering context {contextName}");
                 contextRegistry.Add(id, context);
             }
         }
 
-        private void EnqueueContext(string id)
+        private void EnqueueContext(ContextAction action, string id)
         {
             bool startDequeueing = false;
             lock (_sync)
@@ -99,39 +153,70 @@ namespace ACFW.Controllers
                 {
                     startDequeueing = true;
                 }
-                contextQueue.Enqueue(id);
+                contextQueue.Enqueue(new ContextActionItem { action = action, id = id });
             }
             if (startDequeueing)
             {
-                SwitchContextFromQueue();
+                ProcessContextFromQueue();
             }
         }
 
-        private async void SwitchContextFromQueue()
+        private bool IsActiveContext(string id)
         {
+            return CurrentContextId == id;
+        }
+
+        private bool IsOverlayedContext(string id)
+        {
+            return overlays.Contains(id) >= 0;
+        }
+
+        private async void ProcessContextFromQueue()
+        {
+            ContextActionItem actionItem = new ContextActionItem { action = ContextAction.Switch, id = string.Empty };
             while (true)
             {
-                string nextId = string.Empty;
                 bool hasNextItem = false;
                 lock (_sync)
                 {
                     hasNextItem = contextQueue.Count > 0;
                     if (hasNextItem)
                     {
-                        nextId = contextQueue.Peek();
+                        actionItem = contextQueue.Peek();
                     }
                 }
                 if (!hasNextItem)
                 {
                     return;
                 }
-                await SwitchToContextAsync(nextId);
+                switch (actionItem.action)
+                {
+                    case ContextAction.Switch:
+                        if (!IsActiveContext(actionItem.id) && !IsOverlayedContext(actionItem.id))
+                        {
+                            await SwitchToContextAsync(actionItem.id);
+                        }
+                        break;
+                    case ContextAction.OpenOverlay:
+                        if (!IsActiveContext(actionItem.id) && !IsOverlayedContext(actionItem.id))
+                        {
+                            await OpenOverlayContextAsync(actionItem.id);
+                        }
+                        break;
+                    case ContextAction.CloseOverlay:
+                        if (IsOverlayedContext(actionItem.id))
+                        {
+                            await CloseOverlayContextAsync(actionItem.id);
+                        }
+                        break;
+                }
                 lock (_sync)
                 {
                     contextQueue.Dequeue();
                 }
             }
         }
+
         private async Task LoadSceneAsync(string newSceneName)
         {
             var currentSceneName = SceneManager.GetActiveScene().name;
@@ -158,9 +243,9 @@ namespace ACFW.Controllers
 
         private async Task SwitchToContextAsync(string id)
         {
-            Debug.Log($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Switching from context {CurrentContextId} to context {id}");
             if (!string.IsNullOrEmpty(id) && contextRegistry.ContainsKey(id))
             {
+                Debug.Log($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Switching from context {CurrentContextId} to context {id}");
                 if (!id.Equals(CurrentContext.id))
                 {
                     var newContext = contextRegistry[id];
@@ -215,9 +300,49 @@ namespace ACFW.Controllers
             }
         }
 
+        private async Task OpenOverlayContextAsync(string id)
+        {
+            if (!string.IsNullOrEmpty(id) && contextRegistry.ContainsKey(id))
+            {
+                Debug.Log($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Opening overlay context {id}");
+                var context = contextRegistry[id];
+                try
+                {
+                    await context.PreOpen();
+                    await context.Open();
+                    await context.PostOpen();
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Could not successfully open overlay context {id}: {ex}");
+                }
+                overlays.Add(new ContextItem { id = id });
+            }
+        }
+
+        private async Task CloseOverlayContextAsync(string id)
+        {
+            if (!string.IsNullOrEmpty(id) && contextRegistry.ContainsKey(id))
+            {
+                Debug.Log($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Closing overlay context {id}");
+                var context = contextRegistry[id];
+                try
+                {
+                    await context.PreClose();
+                    await context.Close();
+                    await context.PostClose();
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"[{GetType().Name}.{nameof(SwitchToContextAsync)}] Could not successfully close overlay context {id}: {ex}");
+                }
+                overlays.Remove(new ContextItem { id = id });
+            }
+        }
+
         public void ActivateContext(string id)
         {
-            EnqueueContext(id);
+            EnqueueContext(ContextAction.Switch, id);
         }
 
         public void RestoreContext()
@@ -227,6 +352,16 @@ namespace ACFW.Controllers
             {
                 ActivateContext(previousContext.id);
             }
+        }
+
+        public void OpenOverlayContext(string id)
+        {
+            EnqueueContext(ContextAction.OpenOverlay, id);
+        }
+
+        public void CloseOverlayContext(string id)
+        {
+            EnqueueContext(ContextAction.CloseOverlay, id);
         }
     }
 }

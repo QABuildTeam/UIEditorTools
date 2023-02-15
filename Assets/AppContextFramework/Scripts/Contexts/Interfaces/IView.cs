@@ -6,12 +6,11 @@ namespace ACFW.Views
     {
         IServiceLocator Environment { get; set; }
         Task PreShow();
-        Task Show(bool force = false);
+        Task Show();
         Task PostShow();
         Task PreHide();
         Task Hide();
         Task PostHide();
-        bool HideOnOpen { get; }
     }
 
     public interface IView<T> : IView

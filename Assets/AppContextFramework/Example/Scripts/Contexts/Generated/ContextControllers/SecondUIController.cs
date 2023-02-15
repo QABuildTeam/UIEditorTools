@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using ACFW.Controllers;
 using ACFW.Example.Views;
 using ACFW.Example.Environment;
+using System;
 
 namespace ACFW.Example.Controllers
 {
@@ -20,16 +21,23 @@ namespace ACFW.Example.Controllers
             EventManager.Get<SecondEvents>().GotoStart?.Invoke();
         }
 
+        private void OnOpenOverlayAction()
+        {
+            EventManager.Get<TestOverlayEvents>().OpenTestOverlay?.Invoke();
+        }
+
 
         private void Subscribe()
         {
             SecondView.GotoStartContextAction += OnGotoStartContextAction;
+            SecondView.OpenOverlayAction += OnOpenOverlayAction;
 
         }
 
         private void Unsubscribe()
         {
             SecondView.GotoStartContextAction -= OnGotoStartContextAction;
+            SecondView.OpenOverlayAction -= OnOpenOverlayAction;
 
         }
 

@@ -35,7 +35,7 @@ namespace ACFW.Views
             return Task.CompletedTask;
         }
 
-        public virtual Task Show(bool force = false)
+        public virtual Task Show()
         {
             gameObject.SetActive(true);
             return Task.CompletedTask;

@@ -6,10 +6,6 @@ namespace ACFW.Views
 {
     public class UIView : MonoBehaviour, IView
     {
-        [SerializeField]
-        private bool hideOnOpen = false;
-        public bool HideOnOpen => hideOnOpen;
-
         protected IUIViewAddon[] addons;
         protected IUIViewAddon[] Addons => addons == null ? (addons = GetComponents<IUIViewAddon>()) : addons;
 
@@ -43,15 +39,10 @@ namespace ACFW.Views
             gameObject.SetActive(false);
         }
 
-        public virtual async Task Show(bool force = false)
+        public virtual async Task Show()
         {
             if (isVisible)
             {
-                return;
-            }
-            if (hideOnOpen && !force)
-            {
-                gameObject.SetActive(false);
                 return;
             }
             gameObject.SetActive(true);

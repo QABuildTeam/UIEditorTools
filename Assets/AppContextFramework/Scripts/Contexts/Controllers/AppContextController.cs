@@ -114,7 +114,7 @@ namespace ACFW.Controllers
             {
                 return Task.CompletedTask;
             }
-            var tasks = controllers.Select(c => c.PostClose()).ToList();
+            var tasks = controllers.Select(c => c.PreClose()).ToList();
             return tasks.Count > 0 ? Task.WhenAll(tasks) : Task.CompletedTask;
         }
 

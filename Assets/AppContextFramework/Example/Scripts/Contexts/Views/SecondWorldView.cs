@@ -22,9 +22,9 @@ namespace ACFW.Example.Views
             }
         }
 
-        public override async Task Show(bool force = false)
+        public override async Task Show()
         {
-            await base.Show(force);
+            await base.Show();
             StartCoroutine(CylinderAnimation());
         }
 
