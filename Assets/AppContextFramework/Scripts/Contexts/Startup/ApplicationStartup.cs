@@ -7,11 +7,7 @@ namespace ACFW.Startup
 	public class ApplicationStartup : MonoBehaviour
 	{
 		[SerializeField]
-		protected ContextManager contextManager;
-		[SerializeField]
 		protected SettingsList settings;
-		[SerializeField]
-		protected AppContextList appContextList;
 
 		private static ApplicationStartup instance;
 		private IApplicationEnvironment appEnvironment;
@@ -30,14 +26,12 @@ namespace ACFW.Startup
 			Initialize();
 		}
 
-		protected virtual IApplicationEnvironment CreateApplicationEnvironment()
-        {
-			return new ApplicationEnvironment(contextManager, settings, appContextList);
-		}
 		private void Initialize()
 		{
-			appEnvironment = CreateApplicationEnvironment();
-			appEnvironment.Initialize();
+			appEnvironment = new ApplicationEnvironment(settings);
+			var builders = GetComponentsInChildren<IStartupBuilder>();
+			var runner = GetComponentInChildren<IStartupRunner>();
+			appEnvironment.Initialize(builders, runner);
 		}
 
 		private void Start()

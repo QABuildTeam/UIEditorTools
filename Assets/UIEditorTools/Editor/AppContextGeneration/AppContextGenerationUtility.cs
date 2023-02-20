@@ -34,7 +34,7 @@ namespace UIEditorTools.Editor
         private bool generateVCPair = true;
         private bool generateAppContext = true;
 
-        private static string appContextGenerationSettingsAssetPath = "Assets/UIEditorTools/Resources/AppContextGenerationSettings.asset";
+        private static string appContextGenerationSettingsAssetPath = "Assets/UIEditorTools/Settings/AppContextGenerationSettings.asset";
 
         private AppContextGenerationSettings CreateSettings()
         {

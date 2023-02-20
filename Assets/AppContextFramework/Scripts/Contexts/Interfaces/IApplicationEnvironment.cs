@@ -1,9 +1,10 @@
-namespace ACFW
+using System.Collections.Generic;
+
+namespace ACFW.Startup
 {
     public interface IApplicationEnvironment
     {
-        IServiceLocator Environment { get; }
-        void Initialize();
+        void Initialize(IEnumerable<IStartupBuilder> builders, IStartupRunner runner);
         void Run();
     }
 }
