@@ -19,6 +19,12 @@ MonoBehaviour:
   - eventRealm: SecondEvents
     eventName: GotoStart
     sfxType: 12
+  - eventRealm: TestOverlayEvents
+    eventName: OpenTestOverlay
+    sfxType: 12
+  - eventRealm: TestOverlayEvents
+    eventName: CloseTestOverlay
+    sfxType: 13
   musicDescriptors:
   - eventRealm: TestEvents
     eventName: SwitchToNextContext

@@ -10,8 +10,10 @@ namespace SimpleAudioSystem.Editor
         [MenuItem("Tools/Audio/Simple Audio System")]
         private static void ShowWIndow()
         {
-            EditorWindow.GetWindow(typeof(SimpleAudioSystemEditor));
+            EditorWindow.GetWindow<SimpleAudioSystemEditor>().LoadSettings();
         }
+
+        private string projectRootNamespace = "SimpleAudioSystem";
 
         private string simpleAudioPlayerSettingsFilename = "Assets/SimpleAudioSystem/Settings/AudioSettings.asset";
         private bool simpleAudioPlayerSettingsOverwrite = false;
@@ -28,13 +30,63 @@ namespace SimpleAudioSystem.Editor
 
         private AudioClipSettings audioClipSettingsAsset;
         private string audioEventHandlersPath = "Assets/SimpleAudioSystem/Scripts/Generated";
-        private string audioEventHandlersFilename = "AudioEventsSubscriber_generated.cs";
+        private string audioEventHandlersFilename = "AudioEventsHandler.cs";
 
         private AudioEventSettings audioEventSettingsAsset;
+
+        private static string simpleAudioSystemEditorSettingsAssetPath = "Assets/SimpleAudioSystem/Settings/SimpleAudioSystemEditorSettings.asset";
+
+        private SimpleAudioSystemEditorSettings CreateSettings()
+        {
+            var settings = ScriptableObject.CreateInstance<SimpleAudioSystemEditorSettings>();
+            Debug.Log($"Project namespace={settings.projectRootNamespace}");
+            settings.projectRootNamespace = projectRootNamespace;
+            settings.simpleAudioPlayerSettingsFilename = simpleAudioPlayerSettingsFilename;
+            settings.audioClipSettingsFilename = audioClipSettingsFilename;
+            settings.audioEventSettingsFilename = audioEventSettingsFilename;
+
+            settings.audioTypesPath = audioTypesPath;
+            settings.musicTypesFilename = musicTypesFilename;
+            settings.sfxTypesFilename = sfxTypesFilename;
+
+            settings.audioEventHandlersPath = audioEventHandlersPath;
+            settings.audioEventHandlersFilename = audioEventHandlersFilename;
+            return settings;
+        }
+        private SimpleAudioSystemEditor LoadSettings()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(simpleAudioSystemEditorSettingsAssetPath));
+            SimpleAudioSystemEditorSettings settings = AssetDatabase.LoadAssetAtPath<SimpleAudioSystemEditorSettings>(simpleAudioSystemEditorSettingsAssetPath);
+            if (settings == null)
+            {
+                settings = CreateSettings();
+                AssetDatabase.CreateAsset(settings, simpleAudioSystemEditorSettingsAssetPath);
+            }
+            projectRootNamespace = settings.projectRootNamespace;
+            simpleAudioPlayerSettingsFilename = settings.simpleAudioPlayerSettingsFilename;
+            audioClipSettingsFilename = settings.audioClipSettingsFilename;
+            audioEventSettingsFilename = settings.audioEventSettingsFilename;
+
+            audioTypesPath = settings.audioTypesPath;
+            musicTypesFilename = settings.musicTypesFilename;
+            sfxTypesFilename = settings.sfxTypesFilename;
+
+            audioEventHandlersPath = settings.audioEventHandlersPath;
+            audioEventHandlersFilename = settings.audioEventHandlersFilename;
+            return this;
+        }
+
+        private void SaveSettings()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(simpleAudioSystemEditorSettingsAssetPath));
+            var settings = CreateSettings();
+            AssetDatabase.CreateAsset(settings, simpleAudioSystemEditorSettingsAssetPath);
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
+        }
+
+
         private void OnGUI()
         {
-
-
             // SimpleAudioPlayer settings
             simpleAudioPlayerSettingsFilename = EditorGUILayout.TextField("Audio settings file name", simpleAudioPlayerSettingsFilename);
             simpleAudioPlayerSettingsOverwrite = EditorGUILayout.Toggle("Force re-create", simpleAudioPlayerSettingsOverwrite);
@@ -60,7 +112,7 @@ namespace SimpleAudioSystem.Editor
             {
                 SettingsCreator.CreateAudioEventSettings(audioEventSettingsFilename, audioEventSettingsOverwrite);
             }
-            GUILayout.Space(20);
+            EditorGUILayout.Separator();
 
             // Music and SFX types definitions
             if (File.Exists(audioClipSettingsFilename))
@@ -79,7 +131,7 @@ namespace SimpleAudioSystem.Editor
                     MusicSFXTypesGenerator.GenerateSFXTypes(sfxTypesPathname, settings);
                     ClipIdFiller.FillIds(audioClipSettingsFilename);
                 }
-                GUILayout.Space(20);
+                EditorGUILayout.Separator();
 
                 // Audio event subscribers
                 if (File.Exists(audioEventSettingsFilename))
@@ -87,12 +139,17 @@ namespace SimpleAudioSystem.Editor
                     audioEventSettingsAsset = AssetDatabase.LoadAssetAtPath<AudioEventSettings>(audioEventSettingsFilename);
                     audioEventSettingsAsset = EditorGUILayout.ObjectField("Audio event settings", audioEventSettingsAsset, typeof(AudioEventSettings), true) as AudioEventSettings;
                     audioEventHandlersPath = EditorGUILayout.TextField("Audio event subscribers script path", audioEventHandlersPath);
-                    audioEventHandlersFilename = EditorGUILayout.TextField("Audio event subscribers script filename", audioEventHandlersFilename);
-                    if (GUILayout.Button("Generate scipt with audio event handlers"))
+                    //audioEventHandlersFilename = EditorGUILayout.TextField("Audio event subscribers script filename", audioEventHandlersFilename);
+                    if (GUILayout.Button("Generate scipt AudioEventHandler.cs with audio event handlers"))
                     {
-                        EventHandlersGenerator.Generate(Path.Combine(audioEventHandlersPath, audioEventHandlersFilename), audioClipSettingsAsset, audioEventSettingsAsset);
+                        EventHandlersGenerator.Generate(Path.Combine(audioEventHandlersPath, audioEventHandlersFilename), projectRootNamespace, audioClipSettingsAsset, audioEventSettingsAsset);
                     }
                 }
+                EditorGUILayout.Separator();
+            }
+            if (GUILayout.Button("Save settings"))
+            {
+                SaveSettings();
             }
         }
     }

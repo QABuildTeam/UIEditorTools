@@ -24,7 +24,7 @@ MonoBehaviour:
     descriptiveName: MainMenu
     numericType: 11
   sfxTracks:
-  - clip: {fileID: 8300000, guid: b22330ee8923a0344b0c25060a9eaa69, type: 3}
+  - clip: {fileID: 8300000, guid: 718b4284d9b32804896ad303bdd446f3, type: 3}
     volumeNormalizingFactor: 1
     loop: 0
     descriptiveName: Universal
@@ -33,14 +33,14 @@ MonoBehaviour:
     volumeNormalizingFactor: 1
     loop: 0
     descriptiveName: MainMenu/Button
-    numericType: 0
+    numericType: 11
   - clip: {fileID: 8300000, guid: 718b4284d9b32804896ad303bdd446f3, type: 3}
     volumeNormalizingFactor: 1
     loop: 0
     descriptiveName: Game/Win
-    numericType: 0
+    numericType: 12
   - clip: {fileID: 8300000, guid: bcf5d49f37f39db44873d7213d1a538b, type: 3}
     volumeNormalizingFactor: 1
     loop: 0
     descriptiveName: Game/Fail
-    numericType: 0
+    numericType: 13
