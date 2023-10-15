@@ -22,7 +22,7 @@ namespace SimpleAudioSystem
             sfxTracks = settings.sfxTracks;
 
             audioPlayer = gameObject.AddComponent<SimpleAudioPlayer>();
-            audioPlayer.Init(settingsManager.Get<AudioSettings>().data);
+            audioPlayer.Init(settingsManager.Get<AudioPlayerSettings>().data);
 
             environment.Get<IEventManager>().Get<AudioEvents>().PlayMusic += OnPlayMusic;
             environment.Get<IEventManager>().Get<AudioEvents>().PlaySFX += OnPlaySFX;

@@ -11,34 +11,27 @@ namespace ACFW.Controllers
         private bool isOpen = false;
         public bool IsOpen() => isOpen;
 
-        protected IServiceLocator environment;
-        protected ViewControllerPair[] worldObjects;
-        protected ViewControllerPair[] uiObjects;
+        private readonly IEnumerable<IMVCContainer> mvcContainers;
         protected ITransformManager worldManager;
         protected ITransformManager uiManager;
 
         public string SceneName { get; }
 
         public AppContextController(
-            ViewControllerPair[] worldObjects,
+            IEnumerable<IMVCContainer> mvcContainers,
             ITransformManager worldManager,
-            ViewControllerPair[] uiObjects,
             ITransformManager uiManager,
-            string sceneName,
-            IServiceLocator environment)
+            string sceneName)
         {
-            this.worldObjects = worldObjects;
+            this.mvcContainers = mvcContainers;
             this.worldManager = worldManager;
-            this.uiObjects = uiObjects;
             this.uiManager = uiManager;
             SceneName = sceneName;
-            this.environment = environment;
         }
 
         private object _sync = new object();
-        private List<ObjectLoader<IView>> viewLoaders = new List<ObjectLoader<IView>>();
+        private List<GameObjectLoader<IView>> viewLoaders = new List<GameObjectLoader<IView>>();
         private List<IContextController> controllers = new List<IContextController>();
-        public List<IContextController> Controllers => controllers;
 
         #region Open
         public async Task PreOpen()
@@ -50,13 +43,13 @@ namespace ACFW.Controllers
             viewLoaders.Clear();
             controllers.Clear();
 
-            async Task CreateView(ViewControllerPair pair, ITransformManager transformManager)
+            async Task CreateVCPair(IMVCContainer mvcContainer, ITransformManager transformManager)
             {
-                var loader = new ObjectLoader<IView>(pair.ViewAssetReference, transformManager.InitialTransform);
+                var loader = mvcContainer.ViewLoaderFactory.Create(transformManager.InitialTransform);
                 var view = await loader.Load();
                 if (view != null)
                 {
-                    var controller = pair.GetContextController(view, environment);
+                    var controller = mvcContainer.ControllerFactory.Create(view);
                     lock (_sync)
                     {
                         viewLoaders.Add(loader);
@@ -68,14 +61,7 @@ namespace ACFW.Controllers
                 }
             }
             var tasks = new List<Task>();
-            if (worldObjects.Length > 0)
-            {
-                tasks.AddRange(worldObjects.Where(p => p != null).Select(p => CreateView(p, worldManager)));
-            }
-            if (uiObjects.Length > 0)
-            {
-                tasks.AddRange(uiObjects.Where(p => p != null).Select(p => CreateView(p, uiManager)));
-            }
+            tasks.AddRange(mvcContainers.Where(p => p != null).Select(p => CreateVCPair(p, p.IsUI ? uiManager : worldManager)));
             if (tasks.Count > 0)
             {
                 await Task.WhenAll(tasks);

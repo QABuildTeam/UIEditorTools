@@ -4,21 +4,22 @@ using ACFW.Example.Environment;
 
 namespace ACFW.Example.Controllers
 {
-    public class SecondSwitcher : AbstractContextSwitcher
+    public class SecondSwitcher : AbstractAppContextSwitcher<TestAppContext>
     {
-        protected override void Subscribe()
+        private readonly SecondEvents secondEvents;
+        public SecondSwitcher(SecondEvents secondEvents, ContextEvents contextEvents) : base(contextEvents)
         {
-            EventManager.Get<SecondEvents>().GotoStart += OnGotoStart;
+            this.secondEvents = secondEvents;
         }
 
-        protected override void Unsubscribe()
+        public override sealed void Subscribe()
         {
-            EventManager.Get<SecondEvents>().GotoStart -= OnGotoStart;
+            secondEvents.GotoStart += SwitchContext;
         }
 
-        private void OnGotoStart()
+        public override sealed void Unsubscribe()
         {
-            EventManager.Get<ContextEvents>().ActivateContext?.Invoke(nameof(TestAppContext));
+            secondEvents.GotoStart -= SwitchContext;
         }
     }
 }

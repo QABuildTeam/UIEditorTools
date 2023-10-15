@@ -7,17 +7,17 @@ namespace ACFW.Example.Controllers
 {
     public partial class TestOverlayUIController : ContextController
     {
-        private IEventManager EventManager => environment.Get<IEventManager>();
-        private ISettingsManager SettingsManager => environment.Get<ISettingsManager>();
+        private readonly TestOverlayEvents testOverlayEvents;
 
         private TestOverlayUIView TestOverlayView => (TestOverlayUIView)view;
-        public TestOverlayUIController(TestOverlayUIView view, IServiceLocator environment) : base(view, environment)
+        public TestOverlayUIController(TestOverlayUIView view, TestOverlayEvents testOverlayEvents) : base(view)
         {
+            this.testOverlayEvents = testOverlayEvents;
         }
 
         private void OnCloseOverlayAction()
         {
-            EventManager.Get<TestOverlayEvents>().CloseTestOverlay?.Invoke();
+            testOverlayEvents.CloseTestOverlay?.Invoke();
         }
 
 
@@ -30,13 +30,11 @@ namespace ACFW.Example.Controllers
         private void Unsubscribe()
         {
             TestOverlayView.CloseOverlayAction -= OnCloseOverlayAction;
-
         }
 
 
         public override async Task Open()
         {
-            TestOverlayView.Environment = environment;
             await base.Open();
             Subscribe();
         }

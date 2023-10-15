@@ -4,7 +4,6 @@ namespace ACFW.Views
 {
     public interface IView
     {
-        IServiceLocator Environment { get; set; }
         Task PreShow();
         Task Show();
         Task PostShow();

@@ -8,7 +8,7 @@ namespace ACFW.Example.Controllers
     public class SecondWorldController : ContextController
     {
         private SecondWorldView SecondView => (SecondWorldView)view;
-        public SecondWorldController(SecondWorldView view, IServiceLocator environment) : base(view, environment)
+        public SecondWorldController(SecondWorldView view) : base(view)
         {
         }
         public override Task Open()

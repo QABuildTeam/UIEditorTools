@@ -8,22 +8,24 @@ namespace ACFW.Example.Controllers
 {
     public partial class SecondUIController : ContextController
     {
-        private IEventManager EventManager => environment.Get<IEventManager>();
-        private ISettingsManager SettingsManager => environment.Get<ISettingsManager>();
+        private readonly SecondEvents secondEvents;
+        private readonly TestOverlayEvents testOverlayEvents;
 
         private SecondUIView SecondView => (SecondUIView)view;
-        public SecondUIController(SecondUIView view, IServiceLocator environment) : base(view, environment)
+        public SecondUIController(SecondUIView view, SecondEvents secondEvents, TestOverlayEvents testOverlayEvents) : base(view)
         {
+            this.secondEvents = secondEvents;
+            this.testOverlayEvents = testOverlayEvents;
         }
 
         private void OnGotoStartContextAction()
         {
-            EventManager.Get<SecondEvents>().GotoStart?.Invoke();
+            secondEvents.GotoStart?.Invoke();
         }
 
         private void OnOpenOverlayAction()
         {
-            EventManager.Get<TestOverlayEvents>().OpenTestOverlay?.Invoke();
+            testOverlayEvents.OpenTestOverlay?.Invoke();
         }
 
 
@@ -41,10 +43,8 @@ namespace ACFW.Example.Controllers
 
         }
 
-
         public override async Task Open()
         {
-            SecondView.Environment = environment;
             await base.Open();
             Subscribe();
         }

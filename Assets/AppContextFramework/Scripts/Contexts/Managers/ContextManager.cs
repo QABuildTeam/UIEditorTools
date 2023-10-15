@@ -1,43 +1,42 @@
 using UnityEngine;
 using ACFW.Environment;
 using ACFW.Views;
+using System.Collections.Generic;
+using System;
 
 namespace ACFW.Controllers
 {
-    public class ContextManager : MonoBehaviour
+    public class ContextManager : IDisposable
     {
-        private AppContextSelector selector;
-        private IServiceLocator environment;
-        private IEventManager EventManager => environment?.Get<IEventManager>();
+        private readonly AppContextSelector selector;
+        private readonly ContextEvents contextEvents;
+        private readonly WorldTransformManager worldManager;
+        private readonly UITransformManager uiManager;
+        private readonly IMasterCanvasManager masterCanvasManager;
+        private readonly IEnumerable<IContextSwitcher> contextSwitchers;
 
-        [SerializeField]
-        private WorldTransformManager worldManager;
-        [SerializeField]
-        private UITransformManager uiManager;
-        [SerializeField]
-        private MasterCanvasManager masterCanvasManager;
-
-        public void Setup(AppContextSelector selector, AppContext[] appContexts, IServiceLocator environment)
+        public ContextManager(
+            AppContextSelector selector,
+            IEnumerable<AppContextContainer> appContexts,
+            ContextEvents contextEvents,
+            WorldTransformManager worldTransformManager,
+            UITransformManager uiTransformManager,
+            IEnumerable<IContextSwitcher> switchers,
+            IMasterCanvasManager masterCanvasManager)
         {
             this.selector = selector;
-            this.environment = environment;
-            if (masterCanvasManager != null)
-            {
-                masterCanvasManager.Init();
-                environment.Add<IMasterCanvasManager>(masterCanvasManager);
-            }
-            foreach (var switcher in GetComponents<IContextSwitcher>())
-            {
-                switcher.Init(environment);
-            }
-            EventManager.Get<ContextEvents>().ActivateContext += OnActivateContext;
-            EventManager.Get<ContextEvents>().RestoreContext += OnRestoreContext;
-            EventManager.Get<ContextEvents>().OpenOverlayContext += OnOpenOverlayContext;
-            EventManager.Get<ContextEvents>().CloseOverlayContext += OnCloseOverlayContext;
+            this.masterCanvasManager = masterCanvasManager;
+
             foreach (var appContext in appContexts)
             {
-                this.selector.RegisterContext(appContext.Id, appContext.GetAppContextController(worldManager, uiManager, environment));
+                this.selector.RegisterContext(appContext.Id, appContext.CreateAppContextController(worldManager, uiManager));
             }
+            contextSwitchers = switchers;
+
+            contextEvents.ActivateContext += OnActivateContext;
+            contextEvents.RestoreContext += OnRestoreContext;
+            contextEvents.OpenOverlayContext += OnOpenOverlayContext;
+            contextEvents.CloseOverlayContext += OnCloseOverlayContext;
         }
 
         private void OnActivateContext(string id)
@@ -58,6 +57,14 @@ namespace ACFW.Controllers
         private void OnCloseOverlayContext(string id)
         {
             selector.CloseOverlayContext(id);
+        }
+
+        public void Dispose()
+        {
+            contextEvents.ActivateContext -= OnActivateContext;
+            contextEvents.RestoreContext -= OnRestoreContext;
+            contextEvents.OpenOverlayContext -= OnOpenOverlayContext;
+            contextEvents.CloseOverlayContext -= OnCloseOverlayContext;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace SimpleAudioSystem.Editor
                         .SelectMany(a => a.GetTypes())
                         .Where(t => t != iept && iept.IsAssignableFrom(t))
                         .ToDictionary(
-                            t => t.Name,
+                            t => t.FullName.Replace(".", "/"),
                             t => t.GetFields()
                                 .Where(f => f.FieldType.Name.StartsWith(nameof(UEvent)))
                                 .Select(f => f.Name).ToList()
@@ -56,7 +56,9 @@ namespace SimpleAudioSystem.Editor
         private void StringPopup(Rect position, SerializedProperty property, List<string> options)
         {
             int selectedIndex = options.IndexOf(property.stringValue);
-            selectedIndex = EditorGUI.Popup(position, selectedIndex, options.ToArray());
+            var style = EditorStyles.popup;
+            style.alignment = TextAnchor.MiddleRight;
+            selectedIndex = EditorGUI.Popup(position, selectedIndex, options.ToArray(), style);
             property.stringValue = selectedIndex >= 0 && selectedIndex < options.Count ? options[selectedIndex] : string.Empty;
         }
 

@@ -32,7 +32,7 @@ namespace ACFW.Views
             isVisible = false;
             if (Addons != null)
             {
-                await Task.WhenAll(Addons.Select(a => a.DoHideTask(Environment)));
+                await Task.WhenAll(Addons.Select(a => a.DoHideTask()));
             }
             await Done();
             Environment = null;
@@ -49,7 +49,7 @@ namespace ACFW.Views
             await Init();
             if (Addons != null)
             {
-                await Task.WhenAll(Addons.Select(a => a.DoShowTask(Environment)));
+                await Task.WhenAll(Addons.Select(a => a.DoShowTask()));
             }
             isVisible = true;
         }
@@ -63,7 +63,7 @@ namespace ACFW.Views
             if (Addons != null)
             {
                 gameObject.SetActive(true);
-                await Task.WhenAll(Addons.Select(a => a.DoPreShowTask(Environment)));
+                await Task.WhenAll(Addons.Select(a => a.DoPreShowTask()));
                 gameObject.SetActive(false);
             }
         }
@@ -76,7 +76,7 @@ namespace ACFW.Views
             }
             if (Addons != null)
             {
-                await Task.WhenAll(Addons.Select(a => a.DoPostShowTask(Environment)));
+                await Task.WhenAll(Addons.Select(a => a.DoPostShowTask()));
             }
         }
 
@@ -88,7 +88,7 @@ namespace ACFW.Views
             }
             if (Addons != null)
             {
-                await Task.WhenAll(Addons.Select(a => a.DoPreHideTask(Environment)));
+                await Task.WhenAll(Addons.Select(a => a.DoPreHideTask()));
             }
         }
 
@@ -101,7 +101,7 @@ namespace ACFW.Views
             if (Addons != null)
             {
                 gameObject.SetActive(true);
-                await Task.WhenAll(Addons.Select(a => a.DoPostHideTask(Environment)));
+                await Task.WhenAll(Addons.Select(a => a.DoPostHideTask()));
                 gameObject.SetActive(false);
             }
         } 

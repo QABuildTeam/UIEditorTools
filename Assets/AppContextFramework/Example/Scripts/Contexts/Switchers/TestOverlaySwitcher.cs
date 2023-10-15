@@ -1,32 +1,27 @@
 using ACFW.Environment;
 using ACFW.Controllers;
 using ACFW.Example.Environment;
-using System;
 
 namespace ACFW.Example.Controllers
 {
-    public class TestOverlaySwitcher : AbstractContextSwitcher
+    public class TestOverlaySwitcher : AbstractAppOverlayContextSwitcher<TestOverlayAppContext>
     {
-        protected override void Subscribe()
+        private readonly TestOverlayEvents testOverlayEvents;
+        public TestOverlaySwitcher(TestOverlayEvents testOverlayEvents, ContextEvents contextEvents) : base(contextEvents)
         {
-            EventManager.Get<TestOverlayEvents>().OpenTestOverlay += OnOpenTestOverlay;
-            EventManager.Get<TestOverlayEvents>().CloseTestOverlay += OnCloseTestOverlay;
+            this.testOverlayEvents = testOverlayEvents;
         }
 
-        protected override void Unsubscribe()
+        public override sealed void Subscribe()
         {
-            EventManager.Get<TestOverlayEvents>().OpenTestOverlay -= OnOpenTestOverlay;
-            EventManager.Get<TestOverlayEvents>().CloseTestOverlay -= OnCloseTestOverlay;
+            testOverlayEvents.OpenTestOverlay += OpenContext;
+            testOverlayEvents.CloseTestOverlay += CloseContext;
         }
 
-        private void OnOpenTestOverlay()
+        public override sealed void Unsubscribe()
         {
-            EventManager.Get<ContextEvents>().OpenOverlayContext?.Invoke(nameof(TestOverlayAppContext));
-        }
-
-        private void OnCloseTestOverlay()
-        {
-            EventManager.Get<ContextEvents>().CloseOverlayContext?.Invoke(nameof(TestOverlayAppContext));
+            testOverlayEvents.OpenTestOverlay -= OpenContext;
+            testOverlayEvents.CloseTestOverlay -= CloseContext;
         }
     }
 }

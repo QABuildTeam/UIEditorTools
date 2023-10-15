@@ -9,7 +9,6 @@ namespace ACFW.Controllers
 
         protected bool isOpen = false;
         public bool IsOpen() => isOpen;
-        protected IServiceLocator environment;
 
         public virtual Task Open()
         {
@@ -18,10 +17,6 @@ namespace ACFW.Controllers
                 return Task.CompletedTask;
             }
             isOpen = true;
-            if (view != null)
-            {
-                view.Environment = environment;
-            }
             return view?.Show();
         }
 
@@ -30,14 +25,12 @@ namespace ACFW.Controllers
             await view?.Hide();
             isOpen = false;
             view = null;
-            environment = null;
         }
 
         public virtual async Task PreOpen()
         {
             if (view != null)
             {
-                view.Environment = environment;
                 await view.PreShow();
             }
         }
@@ -46,7 +39,6 @@ namespace ACFW.Controllers
         {
             if (view != null)
             {
-                view.Environment = environment;
                 await view.PostShow();
             }
         }
@@ -55,7 +47,6 @@ namespace ACFW.Controllers
         {
             if (view != null)
             {
-                view.Environment = environment;
                 await view.PreHide();
             }
         }
@@ -64,15 +55,13 @@ namespace ACFW.Controllers
         {
             if (view != null)
             {
-                view.Environment = environment;
                 await view.PostHide();
             }
         }
 
-        public ContextController(IView view, IServiceLocator environment)
+        public ContextController(IView view)
         {
             this.view = view;
-            this.environment = environment;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace SimpleAudioSystem.Editor
 {
     public static class TypeOptionsBuilder
     {
-        private static void ScanTypeContants(Type type, string typePath, Dictionary<string, int> optionDictionary)
+        private static void ScanTypeConstants(Type type, string typePath, Dictionary<string, int> optionDictionary)
         {
             if (!string.IsNullOrEmpty(typePath))
             {
@@ -32,12 +32,12 @@ namespace SimpleAudioSystem.Editor
         private static Dictionary<string, int> ScanNestedTypes(Type rootType)
         {
             var result = new Dictionary<string, int>();
-            ScanTypeContants(rootType, string.Empty, result);
+            ScanTypeConstants(rootType, string.Empty, result);
             foreach (var nestedType in AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(t => t.FullName.Contains(rootType.FullName + "+")))
             {
                 var nestedTypeName = nestedType.FullName.Substring(rootType.FullName.Length + 1);
                 var typeNamePath = nestedTypeName.Replace("+", "/");
-                ScanTypeContants(nestedType, typeNamePath, result);
+                ScanTypeConstants(nestedType, typeNamePath, result);
             }
             return result;
         }

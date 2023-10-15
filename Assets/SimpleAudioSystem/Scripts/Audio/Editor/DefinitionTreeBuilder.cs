@@ -1,0 +1,21 @@
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
+
+namespace SimpleAudioSystem.Editor
+{
+    public static class DefinitionTreeBuilder
+    {
+        public static DefinitionTree<int> CompleteTree(DefinitionTree<int> initialTree, int startingValue, IEnumerable<ExtendedAudioDescriptor> descriptorList)
+        {
+            if (descriptorList != null)
+            {
+                foreach (var descriptor in descriptorList)
+                {
+                    initialTree.AddTreeLeaf(descriptor.descriptiveName, startingValue);
+                    ++startingValue;
+                }
+            }
+            return initialTree;
+        }
+    }
+}

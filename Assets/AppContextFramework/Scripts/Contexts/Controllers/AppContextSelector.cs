@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
+using ACFW.Settings;
 
 namespace ACFW.Controllers
 {
@@ -129,9 +130,12 @@ namespace ACFW.Controllers
         private object _sync = new object();
         private Queue<ContextActionItem> contextQueue;
 
-        public AppContextSelector(int maxStackDepth = 5)
+        private readonly AppContextSelectorSettings settings;
+
+        public AppContextSelector(AppContextSelectorSettings settings)
         {
-            stack = new ContextStack(maxStackDepth);
+            this.settings = settings;
+            stack = new ContextStack(this.settings.maxStackDepth);
             overlays = new ContextOverlays();
             contextQueue = new Queue<ContextActionItem>();
         }

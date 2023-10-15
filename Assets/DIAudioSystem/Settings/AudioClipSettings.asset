@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 098aa29ded9f30a44ab3b89a4e0cde99, type: 3}
+  m_Name: AudioClipSettings
+  m_EditorClassIdentifier: 
+  musicTracks:
+  - clip: {fileID: 8300000, guid: b22330ee8923a0344b0c25060a9eaa69, type: 3}
+    volumeNormalizingFactor: 1
+    loop: 0
+    descriptiveName: Universal
+    numericType: 1
+  - clip: {fileID: 8300000, guid: c162f872817dbc8449e68b2e6179a651, type: 3}
+    volumeNormalizingFactor: 1
+    loop: 0
+    descriptiveName: MainMenu
+    numericType: 11
+  sfxTracks:
+  - clip: {fileID: 8300000, guid: 718b4284d9b32804896ad303bdd446f3, type: 3}
+    volumeNormalizingFactor: 1
+    loop: 0
+    descriptiveName: Universal
+    numericType: 1
+  - clip: {fileID: 8300000, guid: 718b4284d9b32804896ad303bdd446f3, type: 3}
+    volumeNormalizingFactor: 1
+    loop: 0
+    descriptiveName: MainMenu/Button
+    numericType: 11
+  - clip: {fileID: 8300000, guid: 718b4284d9b32804896ad303bdd446f3, type: 3}
+    volumeNormalizingFactor: 1
+    loop: 0
+    descriptiveName: Game/Win
+    numericType: 12
+  - clip: {fileID: 8300000, guid: bcf5d49f37f39db44873d7213d1a538b, type: 3}
+    volumeNormalizingFactor: 1
+    loop: 0
+    descriptiveName: Game/Fail
+    numericType: 13

@@ -1,8 +1,10 @@
+using System;
+
 namespace ACFW
 {
-    public interface IContextSwitcher
+    public interface IContextSwitcher : IDisposable
     {
-        void Init(IServiceLocator environment);
-        void Done();
+        void Subscribe();
+        void Unsubscribe();
     }
 }

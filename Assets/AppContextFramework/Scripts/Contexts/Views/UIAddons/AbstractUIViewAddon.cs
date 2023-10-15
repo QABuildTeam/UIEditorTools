@@ -5,32 +5,32 @@ namespace ACFW.Views
 {
     public abstract class AbstractUIViewAddon : MonoBehaviour, IUIViewAddon
     {
-        public virtual Task DoHideTask(IServiceLocator environment)
+        public virtual Task DoHideTask()
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task DoPostHideTask(IServiceLocator environment)
+        public virtual Task DoPostHideTask()
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task DoPostShowTask(IServiceLocator environment)
+        public virtual Task DoPostShowTask()
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task DoPreHideTask(IServiceLocator environment)
+        public virtual Task DoPreHideTask()
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task DoPreShowTask(IServiceLocator environment)
+        public virtual Task DoPreShowTask()
         {
             return Task.CompletedTask;
         }
 
-        public virtual Task DoShowTask(IServiceLocator environment)
+        public virtual Task DoShowTask()
         {
             return Task.CompletedTask;
         }

@@ -42,7 +42,7 @@ namespace {1}.Controllers
                 if (appContextType != null)
                 {
                     var vcPairPath = AssetDatabase.GUIDToAssetPath(vcPairGUID);
-                    var vcPair = AssetDatabase.LoadAssetAtPath(vcPairPath, typeof(ViewControllerPair)) as ViewControllerPair;
+                    var vcPair = AssetDatabase.LoadAssetAtPath(vcPairPath, typeof(ScriptableReference)) as ScriptableReference;
                     if (vcPair != null)
                     {
                         bool isUI = vcPair.GetType().Name.Contains("UI");
@@ -56,11 +56,11 @@ namespace {1}.Controllers
                                 Debug.Log($"vcPair={vcPair}");
                                 if (isUI)
                                 {
-                                    appContext.uiObjects = new ViewControllerPair[] { vcPair };
+                                    appContext.uiObjects = new ScriptableReference[] { vcPair };
                                 }
                                 else
                                 {
-                                    appContext.worldObjects = new ViewControllerPair[] { vcPair };
+                                    appContext.worldObjects = new ScriptableReference[] { vcPair };
                                 }
                                 Debug.Log($"Created {appContextType} asset in {assetFilename}");
                                 AssetDatabase.CreateAsset(appContext, assetFilename);
@@ -76,9 +76,9 @@ namespace {1}.Controllers
                             // re-create existing asset
                             Debug.Log($"App context {appContextType.Name} asset at {assetFilename} already exists");
                             var appContext = asset as ACFW.Controllers.AppContext;
-                            List<ViewControllerPair> worldObjects= appContext.worldObjects.ToList();
-                            List<ViewControllerPair> uiObjects= appContext.uiObjects.ToList();
-                            List<ViewControllerPair> pairObjects = isUI ? uiObjects : worldObjects;
+                            List<ScriptableReference> worldObjects= appContext.worldObjects.ToList();
+                            List<ScriptableReference> uiObjects= appContext.uiObjects.ToList();
+                            List<ScriptableReference> pairObjects = isUI ? uiObjects : worldObjects;
                             var hasUIPair = pairObjects.Any(v => v.GetType().Equals(vcPair.GetType()));
                             if (!hasUIPair)
                             {
